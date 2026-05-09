@@ -26,6 +26,7 @@
     brick_state  DB         75 DUP(1)
 
     lives_count DW         3
+    score       DW         0
 
 
     font_table LABEL BYTE
@@ -159,9 +160,9 @@
     hs5_rank     DB         '5', 0
 
     ; game screen variables
-    gs_score     DB         'SCORE: 1200', 0
-    gs_lives     DB         'LIVES:', 0
-    gs_level     DB         'LEVEL: 01', 0
+    gs_scoreDisplayStr     DB         'SCORE: 0000', 0
+    gs_livesDisplayStr     DB         'LIVES:', 0
+    gs_levelDisplayStr     DB         'LEVEL: 01', 0
     gs_player    DB         'PLAYER:', 0
     gs_name      DB         21 DUP(0)
 
@@ -450,14 +451,14 @@ GameScreenLayout PROC
     mov   ch, 0Fh
     mov   bx, 1*8
     mov   dx, 4
-    mov   si, OFFSET gs_score
+    mov   si, OFFSET gs_scoreDisplayStr
     call  DrawString
 
     ; write "Lives : "
     mov   ch, 0Fh
     mov   bx, 14*8
     mov   dx, 4
-    mov   si, OFFSET gs_lives
+    mov   si, OFFSET gs_livesDisplayStr
     call  DrawString
 
     ; drawing heart icons for lives
@@ -491,7 +492,7 @@ GameScreenLayout PROC
         mov   ch, 0Fh
         mov   bx, 25*8
         mov   dx, 4
-        mov   si, OFFSET gs_level
+        mov   si, OFFSET gs_levelDisplayStr
         call  DrawString
         mov   ch, 0Fh
         mov   bx, 20*8
@@ -734,10 +735,15 @@ MoveBall PROC
     mb_topCollision:
         ; checking if the ball is in the brick zone (Y between 48 and 103)
         cmp   dx, 48
-        jl    mb_topWallCollision      ; If above bricks, check top wall collision
+        jge mbh_no_topWallCollision
+        jmp    mb_topWallCollision      ; If above bricks, check top wall collision
+    
+    mbh_no_topWallCollision:
         cmp   dx, 103
-        jge   mb_paddleCollision        ; If below bricks, proceed to paddle check
+        jl mb_no_paddleCollision
+        jmp   mb_paddleCollision        ; If below bricks, proceed to paddle check
 
+    mb_no_paddleCollision:
         ; --- BRICK COLLISION LOGIC ---
         ; Calculate Row: (ball_y - 48) / 11 
         mov   ax, dx
@@ -749,12 +755,16 @@ MoveBall PROC
         ; Calculate Column: (ball_x - 10) / 20
         mov   ax, bx
         sub   ax, 10
-        js    mb_paddleCollision        ; Safety: if X < 10, no brick hit
+        jb    mb_paddleCollision         ; if X < 10, carry set = underflow, skip
+
+        mbh_no_paddleCollision:
         mov   cl, 20
         div   cl
         mov   cl, al           ; cl = col index (0-14)
         cmp   cl, 15
-        jge   mb_paddleCollision        ; Safety: if X out of bounds
+        jl mb_no_paddleCollision2
+        jmp   mb_paddleCollision        ; Safety: if X out of bounds
+        mb_no_paddleCollision2:
 
         ; Calculate Index in brick_state: (row * 15) + col
         mov   al, ch
@@ -767,33 +777,47 @@ MoveBall PROC
         cmp   brick_state[si], 1
         jne   mb_paddleCollision        ; If 0, it's already broken
 
-        ; --- BREAK THE BRICK ---
-        mov   brick_state[si], 0 ; Mark as dead
-        
-        ; Erase brick from screen (Calculate screen coordinates)
-        push  bx
-        push  dx
+        ; Mark brick as dead
+        mov   brick_state[si], 0
+
+        ; Erase brick from screen (save ball coords first)
+        push  bx               ; save new ball X
+        push  dx               ; save new ball Y
+        push  cx               ; save row/col (ch=row, cl=col)
+
         ; X = (col * 20) + 10
+        xor   ax, ax
         mov   al, cl
-        mov   ah, 20
-        mul   ah
+        mov   ah, 0
+        mov   bx, 20
+        mul   bx
         add   ax, 10
         mov   bx, ax           ; bx = brick screen X
+
         ; Y = (row * 11) + 48
+        xor   ax, ax
         mov   al, ch
-        mov   ah, 11
-        mul   ah
+        mov   ah, 0
+        mov   cx, 11
+        mul   cx
         add   ax, 48
         mov   dx, ax           ; dx = brick screen Y
-        
+
         mov   si, 18           ; Brick width
         mov   di, 8            ; Brick height
-        mov   al, 00h          ; Background color
+        mov   al, 00h          ; Background color (erase brick)
         call  FillRect
-        pop   dx
-        pop   bx
 
-        neg   ball_dy          ; Reverse ball direction
+        pop   cx               ; restore row/col
+        pop   dx               ; restore new ball Y
+        pop   bx               ; restore new ball X
+
+        ; Update score and HUD
+        add   score, 5
+        call  UpdateScoreString
+        call  RefreshScoreHUD
+
+        neg   ball_dy          ; Reverse ball Y direction
         jmp   mb_draw
 
     mb_topWallCollision:
@@ -2026,5 +2050,96 @@ UpdateLivesDisplay PROC
         pop   ax
         ret
 UpdateLivesDisplay ENDP
+
+
+UpdateScoreString PROC
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  di
+
+    mov   ax, score
+    mov   di, OFFSET gs_scoreDisplayStr
+    add   di, 7                ; Point to the first '0' in 'SCORE: 0000'
+    
+    mov   bx, 10               ; Divisor for decimal conversion
+    
+    ; Thousands
+    xor   dx, dx
+    mov   cx, 1000
+    div   cx
+    add   al, '0'
+    mov   [di], al
+    inc   di
+    
+    ; Hundreds
+    mov   ax, dx
+    xor   dx, dx
+    mov   cx, 100
+    div   cx
+    add   al, '0'
+    mov   [di], al
+    inc   di
+    
+    ; Tens
+    mov   ax, dx
+    xor   dx, dx
+    mov   cx, 10
+    div   cx
+    add   al, '0'
+    mov   [di], al
+    inc   di
+    
+    ; Units
+    add   dl, '0'
+    mov   [di], dl
+
+    pop   di
+    pop   dx
+    pop   cx
+    pop   bx
+    pop   ax
+
+    ret
+UpdateScoreString ENDP
+
+
+RefreshScoreHUD PROC
+    push ax
+    push bx
+    push cx
+    push dx             
+    push  es           ; Save Extra Segment
+    push  ds
+    
+    mov   ax, @data    ; Ensure DS is pointing to your variables
+    mov   ds, ax
+    
+    ; 1. Clear Area
+    mov   ch, 05h      ; HUD Color
+    mov   bx, 1*8      ; X
+    mov   dx, 4        ; Y
+    mov   si, 88       ; Width
+    mov   di, 8        ; Height
+    mov   al, 05h      ; Color
+    call  FillRect
+    
+    ; 2. Draw Text
+    mov   ch, 0Fh      ; White
+    mov   bx, 1*8
+    mov   dx, 4
+    mov   si, OFFSET gs_scoreDisplayStr
+    call  DrawString
+    
+    pop   ds
+    pop   es
+    pop   dx
+    pop   cx
+    pop   bx
+    pop   ax
+    ret
+RefreshScoreHUD ENDP
+
 
 END main
