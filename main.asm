@@ -165,528 +165,530 @@
 .CODE
 
 main PROC
-                        mov   ax, @data
-                        mov   ds, ax
-                        mov   es, ax
-                        mov   ax, 0013h
-                        int   10h
-                        call  HomeScreen
-                        call  NameInputScreen
-                        call  MainMenuScreen
-                        mov   ax, 0003h
-                        int   10h
-                        mov   ah, 4Ch
-                        int   21h
+    mov   ax, @data
+    mov   ds, ax
+    mov   es, ax
+    mov   ax, 0013h
+    int   10h
+    call  HomeScreen
+    call  NameInputScreen
+    call  MainMenuScreen
+    mov   ax, 0003h
+    int   10h
+    mov   ah, 4Ch
+    int   21h
 main ENDP
 
 HomeScreen PROC
-                        mov   al, 00h
-                        call  FillScreen
-                        call  DrawBricks
-                        mov   bx, 104-6
-                        mov   dx, 80-6
-                        mov   si, 112+12
-                        mov   di, 8+12
-                        mov   al, 03h
-                        call  DrawRect
-                        mov   bx, 104-6-2
-                        mov   dx, 80-6-2
-                        mov   si, 112+12+4
-                        mov   di, 8+12+4
-                        mov   al, 03h
-                        call  DrawRect
-                        mov   ch, 0Dh
-                        mov   bx, 13*8
-                        mov   dx, 10*8
-                        mov   si, OFFSET title_br
-                        call  DrawString
-                        mov   ch, 05h
-                        mov   bx, 7*8
-                        mov   dx, 15*8
-                        mov   si, OFFSET prompt_msg
-                        call  DrawString
-                        mov   bx, 10
-                        mov   dx, 180
-                        mov   cx, 300
-                        mov   al, 08h
-                        call  DrawHLine
-                        mov   ch, 08h
-                        mov   bx, 0
-                        mov   dx, 23*8
-                        mov   si, OFFSET team_names
-                        call  DrawString
-                        mov   ah, 00h
-                        int   16h
-                        ret
+    mov   al, 00h
+    call  FillScreen
+    call  DrawBricks
+    mov   bx, 104-6
+    mov   dx, 80-6
+    mov   si, 112+12
+    mov   di, 8+12
+    mov   al, 03h
+    call  DrawRect
+    mov   bx, 104-6-2
+    mov   dx, 80-6-2
+    mov   si, 112+12+4
+    mov   di, 8+12+4
+    mov   al, 03h
+    call  DrawRect
+    mov   ch, 0Dh
+    mov   bx, 13*8
+    mov   dx, 10*8
+    mov   si, OFFSET title_br
+    call  DrawString
+    mov   ch, 05h
+    mov   bx, 7*8
+    mov   dx, 15*8
+    mov   si, OFFSET prompt_msg
+    call  DrawString
+    mov   bx, 10
+    mov   dx, 180
+    mov   cx, 300
+    mov   al, 08h
+    call  DrawHLine
+    mov   ch, 08h
+    mov   bx, 0
+    mov   dx, 23*8
+    mov   si, OFFSET team_names
+    call  DrawString
+    mov   ah, 00h
+    int   16h
+    ret
 HomeScreen ENDP
 
 NameInputScreen PROC
-                        mov   al, 00h
-                        call  FillScreen
-                        call  DrawBricks
-                        mov   bx, 0
-                        mov   dx, 50
-                        mov   cx, 320
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   ch, 0Dh
-                        mov   bx, 13*8
-                        mov   dx, 8*8
-                        mov   si, OFFSET title_br
-                        call  DrawString
-                        mov   bx, 0
-                        mov   dx, 80
-                        mov   cx, 320
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Dh
-                        mov   bx, 10*10
-                        mov   dx, 13*8
-                        mov   si, OFFSET name_label
-                        call  DrawString
-                        mov   bx, 80
-                        mov   dx, 118
-                        mov   si, 160
-                        mov   di, 14
-                        mov   al, 05h
-                        call  DrawRect
-                        mov   bx, 81
-                        mov   dx, 119
-                        mov   si, 158
-                        mov   di, 12
-                        mov   al, 00h
-                        call  FillRect
-                        mov   bx, 0
-                        mov   dx, 175
-                        mov   cx, 320
-                        mov   al, 08h
-                        call  DrawHLine
-                        mov   ch, 08h
-                        mov   bx, 4
-                        mov   dx, 184
-                        mov   si, OFFSET instr_msg
-                        call  DrawString
-                        mov   name_len, 0
-                        mov   cx, 21
-                        mov   si, OFFSET name_buf
+    mov   al, 00h
+    call  FillScreen
+    call  DrawBricks
+    mov   bx, 0
+    mov   dx, 50
+    mov   cx, 320
+    mov   al, 05h
+    call  DrawHLine
+    mov   ch, 0Dh
+    mov   bx, 13*8
+    mov   dx, 8*8
+    mov   si, OFFSET title_br
+    call  DrawString
+    mov   bx, 0
+    mov   dx, 80
+    mov   cx, 320
+    mov   al, 01h
+    call  DrawHLine
+    mov   ch, 0Dh
+    mov   bx, 10*10
+    mov   dx, 13*8
+    mov   si, OFFSET name_label
+    call  DrawString
+    mov   bx, 80
+    mov   dx, 118
+    mov   si, 160
+    mov   di, 14
+    mov   al, 05h
+    call  DrawRect
+    mov   bx, 81
+    mov   dx, 119
+    mov   si, 158
+    mov   di, 12
+    mov   al, 00h
+    call  FillRect
+    mov   bx, 0
+    mov   dx, 175
+    mov   cx, 320
+    mov   al, 08h
+    call  DrawHLine
+    mov   ch, 08h
+    mov   bx, 4
+    mov   dx, 184
+    mov   si, OFFSET instr_msg
+    call  DrawString
+    mov   name_len, 0
+    mov   cx, 21
+    mov   si, OFFSET name_buf
+
     nis_clear:
-                        mov   BYTE PTR [si], 0
-                        inc   si
-                        loop  nis_clear
-                        call  UpdateInputDisplay
+        mov   BYTE PTR [si], 0
+        inc   si
+        loop  nis_clear
+        call  UpdateInputDisplay
+
     nis_loop:
-                        mov   ah, 00h
-                        int   16h
-                        cmp   al, 13
-                        je    nis_done
-                        cmp   al, 8
-                        je    nis_back
-                        cmp   name_len, 20
-                        jae   nis_loop
-                        mov   si, name_len
-                        mov   name_buf[si], al
-                        inc   name_len
-                        call  UpdateInputDisplay
-                        jmp   nis_loop
+        mov   ah, 00h
+        int   16h
+        cmp   al, 13
+        je    nis_done
+        cmp   al, 8
+        je    nis_back
+        cmp   name_len, 20
+        jae   nis_loop
+        mov   si, name_len
+        mov   name_buf[si], al
+        inc   name_len
+        call  UpdateInputDisplay
+        jmp   nis_loop
     nis_back:
-                        cmp   name_len, 0
-                        je    nis_loop
-                        dec   name_len
-                        mov   si, name_len
-                        mov   name_buf[si], 0
-                        call  UpdateInputDisplay
-                        jmp   nis_loop
+        cmp   name_len, 0
+        je    nis_loop
+        dec   name_len
+        mov   si, name_len
+        mov   name_buf[si], 0
+        call  UpdateInputDisplay
+        jmp   nis_loop
     nis_done:
-                        mov   cx, name_len
-                        cmp   cx, 0
-                        je    nis_empty
-                        mov   si, OFFSET name_buf
-                        mov   di, OFFSET name_stored
+        mov   cx, name_len
+        cmp   cx, 0
+        je    nis_empty
+        mov   si, OFFSET name_buf
+        mov   di, OFFSET name_stored
     nis_copy:
-                        mov   al, [si]
-                        mov   [di], al
-                        inc   si
-                        inc   di
-                        loop  nis_copy
-                        mov   BYTE PTR [di], 0
-                        jmp   nis_copy_g
+        mov   al, [si]
+        mov   [di], al
+        inc   si
+        inc   di
+        loop  nis_copy
+        mov   BYTE PTR [di], 0
+        jmp   nis_copy_g
     nis_empty:
-                        mov   BYTE PTR [name_stored], 0
+        mov   BYTE PTR [name_stored], 0
     nis_copy_g:
-                        mov   cx, name_len
-                        cmp   cx, 0
-                        je    nis_empty_g
-                        mov   si, OFFSET name_buf
-                        mov   di, OFFSET gs_name
+        mov   cx, name_len
+        cmp   cx, 0
+        je    nis_empty_g
+        mov   si, OFFSET name_buf
+        mov   di, OFFSET gs_name
     nis_copy2:
-                        mov   al, [si]
-                        mov   [di], al
-                        inc   si
-                        inc   di
-                        loop  nis_copy2
-                        mov   BYTE PTR [di], 0
-                        jmp   nis_ret
+        mov   al, [si]
+        mov   [di], al
+        inc   si
+        inc   di
+        loop  nis_copy2
+        mov   BYTE PTR [di], 0
+        jmp   nis_ret
     nis_empty_g:
-                        mov   BYTE PTR [gs_name], 0
+        mov   BYTE PTR [gs_name], 0
     nis_ret:
-                        ret
+        ret
 NameInputScreen ENDP
 
 UpdateInputDisplay PROC
-                        mov   bx, 81
-                        mov   dx, 119
-                        mov   si, 158
-                        mov   di, 12
-                        mov   al, 00h
-                        call  FillRect
-                        mov   ch, 0Fh
-                        mov   bx, 11*8
-                        mov   dx, 15*8
-                        mov   si, OFFSET name_buf
-                        call  DrawString
-                        ret
+    mov   bx, 81
+    mov   dx, 119
+    mov   si, 158
+    mov   di, 12
+    mov   al, 00h
+    call  FillRect
+    mov   ch, 0Fh
+    mov   bx, 11*8
+    mov   dx, 15*8
+    mov   si, OFFSET name_buf
+    call  DrawString
+    ret
 UpdateInputDisplay ENDP
 
 MainMenuScreen PROC
-                        mov   ball_mx, 286
-                        mov   ball_my, 150
-                        mov   ball_mdx, 0
-                        mov   ball_mdy, -1
-                        mov   selected_opt, 1
-                        mov   old_selected, 1
-                        call  DrawMainMenuStatic
+    mov   ball_mx, 286
+    mov   ball_my, 150
+    mov   ball_mdx, 0
+    mov   ball_mdy, -1
+    mov   selected_opt, 1
+    mov   old_selected, 1
+    call  DrawMainMenuStatic
     menu_loop:
-                        call  AnimateMenuBall
+        call  AnimateMenuBall
 
-                        ; Check for keyboard input
-                        mov   ah, 01h
-                        int   16h
-                        jz    menu_loop                    ; No key pressed, continue animation
+        ; Check for keyboard input
+        mov   ah, 01h
+        int   16h
+        jz    menu_loop                    ; No key pressed, continue animation
 
-                        mov   ah, 00h
-                        int   16h
-                        cmp   ah, 48h                      ; Up arrow
-                        je    menu_up
-                        cmp   ah, 50h                      ; Down arrow
-                        je    menu_down
-                        cmp   al, 13                       ; Enter
-                        je    menu_select
-                        cmp   al, 27                       ; ESC
-                        je    menu_exit
-                        jmp   menu_loop
+        mov   ah, 00h
+        int   16h
+        cmp   ah, 48h                      ; Up arrow
+        je    menu_up
+        cmp   ah, 50h                      ; Down arrow
+        je    menu_down
+        cmp   al, 13                       ; Enter
+        je    menu_select
+        cmp   al, 27                       ; ESC
+        je    menu_exit
+        jmp   menu_loop
     menu_up:
-                        cmp   selected_opt, 1
-                        je    menu_loop
-                        mov   ax, selected_opt
-                        mov   old_selected, ax
-                        dec   selected_opt
-                        call  RedrawMenuHighlight
-                        jmp   menu_loop
+        cmp   selected_opt, 1
+        je    menu_loop
+        mov   ax, selected_opt
+        mov   old_selected, ax
+        dec   selected_opt
+        call  RedrawMenuHighlight
+        jmp   menu_loop
     menu_down:
-                        cmp   selected_opt, 4
-                        je    menu_loop
-                        mov   ax, selected_opt
-                        mov   old_selected, ax
-                        inc   selected_opt
-                        call  RedrawMenuHighlight
-                        jmp   menu_loop
+        cmp   selected_opt, 4
+        je    menu_loop
+        mov   ax, selected_opt
+        mov   old_selected, ax
+        inc   selected_opt
+        call  RedrawMenuHighlight
+        jmp   menu_loop
     menu_select:
-                        cmp   selected_opt, 1
-                        je    ms_game
-                        cmp   selected_opt, 2
-                        je    ms_instr
-                        cmp   selected_opt, 3
-                        je    ms_hs
-                        cmp   selected_opt, 4
-                        je    menu_exit
-                        jmp   menu_loop
+        cmp   selected_opt, 1
+        je    ms_game
+        cmp   selected_opt, 2
+        je    ms_instr
+        cmp   selected_opt, 3
+        je    ms_hs
+        cmp   selected_opt, 4
+        je    menu_exit
+        jmp   menu_loop
     ms_game:
-                        call  GameScreenLayout
-                        call  DrawMainMenuStatic
-                        jmp   menu_loop
+        call  GameScreenLayout
+        call  DrawMainMenuStatic
+        jmp   menu_loop
     ms_instr:
-                        call  InstructionsScreen
-                        call  DrawMainMenuStatic
-                        jmp   menu_loop
+        call  InstructionsScreen
+        call  DrawMainMenuStatic
+        jmp   menu_loop
     ms_hs:
-                        call  HighScoreScreen
-                        call  DrawMainMenuStatic
-                        jmp   menu_loop
+        call  HighScoreScreen
+        call  DrawMainMenuStatic
+        jmp   menu_loop
     menu_exit:
-                        ret
+        ret
 MainMenuScreen ENDP
 
 ;----------------------------------------------------------------------
 ; GAME SCREEN WITH PADDLE MOVEMENT
 ;----------------------------------------------------------------------
 GameScreenLayout PROC
-                        ; Initialize paddle position
-                        mov   paddle_x, 125
-                        mov   paddle_old_x, 125
+    ; Initialize paddle position
+    mov   paddle_x, 125
+    mov   paddle_old_x, 125
 
-                        ; Draw game screen background
-                        mov   al, 00h
-                        call  FillScreen
+    ; Draw game screen background
+    mov   al, 00h
+    call  FillScreen
 
-                        ; Draw top status bar
-                        mov   bx, 0
-                        mov   dx, 0
-                        mov   si, 320
-                        mov   di, 28
-                        mov   al, 05h
-                        call  FillRect
+    ; Draw top status bar
+    mov   bx, 0
+    mov   dx, 0
+    mov   si, 320
+    mov   di, 28
+    mov   al, 05h
+    call  FillRect
 
-                        ; Draw status text
-                        mov   ch, 0Fh
-                        mov   bx, 1*8
-                        mov   dx, 4
-                        mov   si, OFFSET gs_score
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 14*8
-                        mov   dx, 4
-                        mov   si, OFFSET gs_lives
-                        call  DrawString
-                        mov   ch, 0Ch
-                        mov   bx, 20*8
-                        mov   dx, 4
-                        mov   al, 3
-                        call  DrawChar
-                        mov   bx, 21*8
-                        call  DrawChar
-                        mov   bx, 22*8
-                        call  DrawChar
-                        mov   ch, 0Fh
-                        mov   bx, 25*8
-                        mov   dx, 4
-                        mov   si, OFFSET gs_level
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 20*8
-                        mov   dx, 17
-                        mov   si, OFFSET gs_player
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 28*8
-                        mov   dx, 17
-                        mov   si, OFFSET gs_name
-                        call  DrawString
+    ; Draw status text
+    mov   ch, 0Fh
+    mov   bx, 1*8
+    mov   dx, 4
+    mov   si, OFFSET gs_score
+    call  DrawString
+    mov   ch, 0Fh
+    mov   bx, 14*8
+    mov   dx, 4
+    mov   si, OFFSET gs_lives
+    call  DrawString
+    mov   ch, 0Ch
+    mov   bx, 20*8
+    mov   dx, 4
+    mov   al, 3
+    call  DrawChar
+    mov   bx, 21*8
+    call  DrawChar
+    mov   bx, 22*8
+    call  DrawChar
+    mov   ch, 0Fh
+    mov   bx, 25*8
+    mov   dx, 4
+    mov   si, OFFSET gs_level
+    call  DrawString
+    mov   ch, 0Fh
+    mov   bx, 20*8
+    mov   dx, 17
+    mov   si, OFFSET gs_player
+    call  DrawString
+    mov   ch, 0Fh
+    mov   bx, 28*8
+    mov   dx, 17
+    mov   si, OFFSET gs_name
+    call  DrawString
 
-                        ; Draw bricks
-                        mov   dx, 48
-                        mov   ch, 0
+    ; Draw bricks
+    mov   dx, 48
+    mov   ch, 0
     gs_rows:
-                        mov   bx, 10
-                        mov   cl, 0
+        mov   bx, 10
+        mov   cl, 0
     gs_cols:
-                        mov   al, ch
-                        add   al, cl
-                        and   al, 03h
-                        cmp   al, 0
-                        je    gsc_mag
-                        cmp   al, 1
-                        je    gsc_dblue
-                        cmp   al, 2
-                        je    gsc_dmag
-                        mov   al, 03h
-                        jmp   gsc_draw
+        mov   al, ch
+        add   al, cl
+        and   al, 03h
+        cmp   al, 0
+        je    gsc_mag
+        cmp   al, 1
+        je    gsc_dblue
+        cmp   al, 2
+        je    gsc_dmag
+        mov   al, 03h
+        jmp   gsc_draw
     gsc_mag:
-                        mov   al, 0Dh
-                        jmp   gsc_draw
+        mov   al, 0Dh
+        jmp   gsc_draw
     gsc_dblue:
-                        mov   al, 01h
-                        jmp   gsc_draw
+        mov   al, 01h
+        jmp   gsc_draw
     gsc_dmag:
-                        mov   al, 05h
+    mov   al, 05h   
     gsc_draw:
-                        mov   si, 18
-                        mov   di, 8
-                        call  FillRect
-                        add   bx, 20
-                        inc   cl
-                        cmp   cl, 15
-                        jl    gs_cols
-                        add   dx, 11
-                        inc   ch
-                        cmp   ch, 5
-                        jl    gs_rows
+        mov   si, 18
+        mov   di, 8
+        call  FillRect
+        add   bx, 20
+        inc   cl
+        cmp   cl, 15
+        jl    gs_cols
+        add   dx, 11
+        inc   ch
+        cmp   ch, 5
+        jl    gs_rows
 
-                       
-                        ; Reset brick_state: all 75 bricks alive
-                        mov   cx, 75
-                        mov   si, OFFSET brick_state
+        
+        ; Reset brick_state: all 75 bricks alive
+        mov   cx, 75
+        mov   si, OFFSET brick_state
     gs_brick_reset:
-                        mov   BYTE PTR [si], 1
-                        inc   si
-                        loop  gs_brick_reset
+        mov   BYTE PTR [si], 1
+        inc   si
+        loop  gs_brick_reset
 
-                        ; Initialize ball above paddle center
-                        mov   ax, paddle_x
-                        add   ax, 32
-                        mov   ball_x, ax
-                        mov   ball_y, 170
-                        mov   ball_dx, 1
-                        mov   ball_dy, -1
-                        mov   ball_launched, 0
+        ; Initialize ball above paddle center
+        mov   ax, paddle_x
+        add   ax, 32
+        mov   ball_x, ax
+        mov   ball_y, 170
+        mov   ball_dx, 1
+        mov   ball_dy, -1
+        mov   ball_launched, 0
 
-                        ; Draw initial ball and paddle
-                        mov   bx, ball_x
-                        mov   dx, ball_y
-                        mov   si, 6
-                        mov   di, 6
-                        mov   al, 0Fh
-                        call  FillRect
-                        call  DrawPaddle
+        ; Draw initial ball and paddle
+        mov   bx, ball_x
+        mov   dx, ball_y
+        mov   si, 6
+        mov   di, 6
+        mov   al, 0Fh
+        call  FillRect
+        call  DrawPaddle
 
     ; === MAIN GAME LOOP ===
     ; Poll hardware keyboard port 60h every frame — no BIOS auto-repeat delay.
     ; Scancode 39h=SPACE, 4Bh=Left, 4Dh=Right, 01h=ESC
     gs_game_loop:
-                        ; Read hardware key state from port 60h
-                        in    al, 60h
-                        ; High bit set means key released — ignore
-                        test  al, 80h
-                        jnz   gs_key_up
+        ; Read hardware key state from port 60h
+        in    al, 60h
+        ; High bit set means key released — ignore
+        test  al, 80h
+        jnz   gs_key_up
 
-                        cmp   al, 01h                      ; ESC scancode
-                        je    gs_exit
+        cmp   al, 01h                      ; ESC scancode
+        je    gs_exit
 
-                        cmp   al, 39h                      ; SPACE scancode
-                        je    gs_space
+        cmp   al, 39h                      ; SPACE scancode
+        je    gs_space
 
-                        cmp   al, 4Bh                      ; Left arrow scancode
-                        je    gs_do_left
-                        cmp   al, 1Eh                      ; A scancode
-                        je    gs_do_left
+        cmp   al, 4Bh                      ; Left arrow scancode
+        je    gs_do_left
+        cmp   al, 1Eh                      ; A scancode
+        je    gs_do_left
 
-                        cmp   al, 4Dh                      ; Right arrow scancode
-                        je    gs_do_right
-                        cmp   al, 20h                      ; D scancode
-                        je    gs_do_right
+        cmp   al, 4Dh                      ; Right arrow scancode
+        je    gs_do_right
+        cmp   al, 20h                      ; D scancode
+        je    gs_do_right
 
-                        jmp   gs_no_move
+        jmp   gs_no_move
 
     gs_key_up:
-                        jmp   gs_no_move
+        jmp   gs_no_move
 
     gs_space:
-                        cmp   ball_launched, 0
-                        jne   gs_no_move
-                        mov   ball_launched, 1
-                        jmp   gs_no_move
+        cmp   ball_launched, 0
+        jne   gs_no_move
+        mov   ball_launched, 1
+        jmp   gs_no_move
 
     gs_do_left:
                         mov   bx, paddle_x
-                        sub   bx, paddle_speed
-                        cmp   bx, 2
-                        jge   gs_apply_move
-                        mov   bx, 2
-                        jmp   gs_apply_move
+        sub   bx, paddle_speed
+        cmp   bx, 2
+        jge   gs_apply_move
+        mov   bx, 2
+        jmp   gs_apply_move
 
     gs_do_right:
-                        mov   bx, paddle_x
-                        add   bx, paddle_speed
-                        mov   ax, 318
-                        sub   ax, paddle_width
-                        cmp   bx, ax
-                        jle   gs_apply_move
-                        mov   bx, ax
+        mov   bx, paddle_x
+        add   bx, paddle_speed
+        mov   ax, 318
+        sub   ax, paddle_width
+        cmp   bx, ax
+        jle   gs_apply_move
+        mov   bx, ax
 
     gs_apply_move:
-                        cmp   bx, paddle_x
-                        je    gs_no_move
-                        call  ClearPaddle
-                        ; If ball not launched, move it with paddle
-                        cmp   ball_launched, 0
-                        jne   gs_move_paddle_only
-                        push  bx
-                        mov   bx, ball_x
-                        mov   dx, ball_y
-                        mov   si, 6
-                        mov   di, 6
-                        mov   al, 00h
-                        call  FillRect
-                        pop   bx
-                        mov   ax, bx
-                        add   ax, 32
-                        mov   ball_x, ax
+        cmp   bx, paddle_x
+        je    gs_no_move
+        call  ClearPaddle
+        ; If ball not launched, move it with paddle
+        cmp   ball_launched, 0
+        jne   gs_move_paddle_only
+        push  bx
+        mov   bx, ball_x
+        mov   dx, ball_y
+        mov   si, 6
+        mov   di, 6
+        mov   al, 00h
+        call  FillRect
+        pop   bx
+        mov   ax, bx
+        add   ax, 32
+        mov   ball_x, ax
     gs_move_paddle_only:
-                        mov   paddle_x, bx
-                        call  DrawPaddle
-                        cmp   ball_launched, 0
-                        jne   gs_no_move
-                        mov   bx, ball_x
-                        mov   dx, ball_y
-                        mov   si, 6
-                        mov   di, 6
-                        mov   al, 0Fh
-                        call  FillRect
+        mov   paddle_x, bx
+        call  DrawPaddle
+        cmp   ball_launched, 0
+        jne   gs_no_move
+        mov   bx, ball_x
+        mov   dx, ball_y
+        mov   si, 6
+        mov   di, 6
+        mov   al, 0Fh
+        call  FillRect
 
     gs_no_move:
-                        ; Move ball if launched
-                        cmp   ball_launched, 0
-                        je    gs_delay
-                        call  MoveBall
+        ; Move ball if launched
+        cmp   ball_launched, 0
+        je    gs_delay
+        call  MoveBall
 
     gs_delay:
-                        mov   cx, ball_speed
+        mov   cx, ball_speed
     gs_delay_lp:
-                        push  cx
-                        mov   cx, 10000
+        push  cx
+        mov   cx, 10000
     gs_delay_in:
-                        loop  gs_delay_in
-                        pop   cx
-                        loop  gs_delay_lp
+        loop  gs_delay_in
+        pop   cx
+        loop  gs_delay_lp
 
-                        jmp   gs_game_loop
+        jmp   gs_game_loop
 
     gs_exit:
                         ret
 GameScreenLayout ENDP
 
 ;----------------------------------------------------------------------
-; MOVE BALL: reflects off left/right walls, top brick boundary, paddle.
+; MOVE BALL: reflects off left/right walls, paddle.
 ; Ball is 6x6. Boundaries: left=2, right=311, top=103 (below bricks),
 ; paddle top = paddle_y. Ball lost if it goes below paddle.
 ;----------------------------------------------------------------------
 MoveBall PROC
-                        push  ax
-                        push  bx
-                        push  cx
-                        push  dx
-                        push  si
-                        push  di
+        push  ax
+        push  bx
+        push  cx
+        push  dx
+        push  si
+        push  di
 
-                        ; Erase ball
-                        mov   bx, ball_x
-                        mov   dx, ball_y
-                        mov   si, 6
-                        mov   di, 6
-                        mov   al, 00h
-                        call  FillRect
+        ; Erase ball
+        mov   bx, ball_x
+        mov   dx, ball_y
+        mov   si, 6
+        mov   di, 6
+        mov   al, 00h
+        call  FillRect
 
-                        ; Next position
-                        mov   ax, ball_x
-                        add   ax, ball_dx
-                        mov   bx, ax                       ; bx = new x
+        ; Next position
+        mov   ax, ball_x
+        add   ax, ball_dx
+        mov   bx, ax                       ; bx = new x
 
-                        mov   ax, ball_y
-                        add   ax, ball_dy
-                        mov   dx, ax                       ; dx = new y
+        mov   ax, ball_y
+        add   ax, ball_dy
+        mov   dx, ax                       ; dx = new y
 
-                        ; Left wall
-                        cmp   bx, 2
-                        jge   mb_right
-                        neg   ball_dx
-                        mov   bx, 2
+        ; Left wall
+        cmp   bx, 2
+        jge   mb_right
+        neg   ball_dx
+        mov   bx, 2
     mb_right:
-                        ; Right wall (right edge = bx+5, must stay <= 317)
-                        mov   ax, bx
-                        add   ax, 5
-                        cmp   ax, 317
-                        jle   mb_top
-                        neg   ball_dx
-                        mov   bx, 311
+        ; Right wall (right edge = bx+5, must stay <= 317)
+        mov   ax, bx
+        add   ax, 5
+        cmp   ax, 317
+        jle   mb_top
+        neg   ball_dx
+        mov   bx, 311
     mb_top:
                         ; Top boundary = bottom of brick area = y 103
                         cmp   dx, 103
@@ -694,1162 +696,1162 @@ MoveBall PROC
                         neg   ball_dy
                         mov   dx, 103
     mb_paddle:
-                        ; Paddle: only when moving down
-                        cmp   ball_dy, 0
-                        jl    mb_bottom
-                        ; ball bottom = dx+5 must reach paddle_y
-                        mov   ax, dx
-                        add   ax, 5
-                        cmp   ax, paddle_y
-                        jl    mb_bottom
-                        ; ball top must not be below paddle
-                        cmp   dx, paddle_y
-                        jg    mb_bottom
-                        ; horizontal overlap: ball_x in [paddle_x .. paddle_x+width)
-                        mov   cx, paddle_x
-                        cmp   bx, cx
-                        jl    mb_bottom
-                        add   cx, paddle_width
-                        cmp   bx, cx
-                        jge   mb_bottom
-                        ; hit
-                        neg   ball_dy
-                        mov   dx, paddle_y
-                        sub   dx, 6
-                        jmp   mb_draw
+        ; Paddle: only when moving down
+        cmp   ball_dy, 0
+        jl    mb_bottom
+        ; ball bottom = dx+5 must reach paddle_y
+        mov   ax, dx
+        add   ax, 5
+        cmp   ax, paddle_y
+        jl    mb_bottom
+        ; ball top must not be below paddle
+        cmp   dx, paddle_y
+        jg    mb_bottom
+        ; horizontal overlap: ball_x in [paddle_x .. paddle_x+width)
+        mov   cx, paddle_x
+        cmp   bx, cx
+        jl    mb_bottom
+        add   cx, paddle_width
+        cmp   bx, cx
+        jge   mb_bottom
+        ; hit
+        neg   ball_dy
+        mov   dx, paddle_y
+        sub   dx, 6
+        jmp   mb_draw
     mb_bottom:
-                        ; Ball lost — fell below screen
-                        mov   ax, dx
-                        add   ax, 5
-                        cmp   ax, 199
-                        jle   mb_draw
-                        ; Reset ball to paddle
-                        mov   ball_launched, 0
-                        mov   ax, paddle_x
-                        add   ax, 32
-                        mov   ball_x, ax
-                        mov   ball_y, 170
-                        mov   ball_dx, 1
-                        mov   ball_dy, -1
-                        mov   bx, ball_x
-                        mov   dx, ball_y
-                        mov   si, 6
-                        mov   di, 6
-                        mov   al, 0Fh
-                        call  FillRect
-                        jmp   mb_done
+        ; Ball lost — fell below screen
+        mov   ax, dx
+        add   ax, 5
+        cmp   ax, 199
+        jle   mb_draw
+        ; Reset ball to paddle
+        mov   ball_launched, 0
+        mov   ax, paddle_x
+        add   ax, 32
+        mov   ball_x, ax
+        mov   ball_y, 170
+        mov   ball_dx, 1
+        mov   ball_dy, -1
+        mov   bx, ball_x
+        mov   dx, ball_y
+        mov   si, 6
+        mov   di, 6
+        mov   al, 0Fh
+        call  FillRect
+        jmp   mb_done
     mb_draw:
-                        mov   ball_x, bx
-                        mov   ball_y, dx
-                        mov   bx, ball_x
-                        mov   dx, ball_y
-                        mov   si, 6
-                        mov   di, 6
-                        mov   al, 0Fh
-                        call  FillRect
+        mov   ball_x, bx
+        mov   ball_y, dx
+        mov   bx, ball_x
+        mov   dx, ball_y
+        mov   si, 6
+        mov   di, 6
+        mov   al, 0Fh
+        call  FillRect
     mb_done:
-                        pop   di
-                        pop   si
-                        pop   dx
-                        pop   cx
-                        pop   bx
-                        pop   ax
-                        ret
+        pop   di
+        pop   si
+        pop   dx
+        pop   cx
+        pop   bx
+        pop   ax
+        ret
 MoveBall ENDP
 ;----------------------------------------------------------------------
 ; DRAW PADDLE
 ;----------------------------------------------------------------------
 DrawPaddle PROC
-                        push  ax
-                        push  bx
-                        push  cx
-                        push  dx
-                        push  si
-                        push  di
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  si
+    push  di
 
-                        mov   bx, paddle_x
-                        mov   dx, paddle_y
-                        mov   si, paddle_width
-                        mov   di, 8
-                        mov   al, 0Fh                      ; White paddle
-                        call  FillRect
+    mov   bx, paddle_x
+    mov   dx, paddle_y
+    mov   si, paddle_width
+    mov   di, 8
+    mov   al, 0Fh                      ; White paddle
+    call  FillRect
 
-                        pop   di
-                        pop   si
-                        pop   dx
-                        pop   cx
-                        pop   bx
-                        pop   ax
-                        ret
+    pop   di
+    pop   si
+    pop   dx
+    pop   cx
+    pop   bx
+    pop   ax
+    ret
 DrawPaddle ENDP
 
 ClearPaddle PROC
-                        push  ax
-                        push  bx
-                        push  cx
-                        push  dx
-                        push  si
-                        push  di
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  si
+    push  di
 
-                        mov   bx, paddle_x
-                        mov   dx, paddle_y
-                        mov   si, paddle_width
-                        mov   di, 8
-                        mov   al, 00h                      ; Black background
-                        call  FillRect
+    mov   bx, paddle_x
+    mov   dx, paddle_y
+    mov   si, paddle_width
+    mov   di, 8
+    mov   al, 00h                      ; Black background
+    call  FillRect
 
-                        pop   di
-                        pop   si
-                        pop   dx
-                        pop   cx
-                        pop   bx
-                        pop   ax
-                        ret
+    pop   di
+    pop   si
+    pop   dx
+    pop   cx
+    pop   bx
+    pop   ax
+    ret
 ClearPaddle ENDP
 ;======================================================================
 ; REMAINING DRAWING UTILITIES
 ;======================================================================
 DrawMainMenuStatic PROC
-                        mov   al, 00h
-                        call  FillScreen
-                        call  DrawNeonFrame
-                        mov   ch, 0Dh
-                        mov   bx, 14*8
-                        mov   dx, 3*8
-                        mov   si, OFFSET menu_title
-                        call  DrawString
-                        mov   bx, 12*8
-                        mov   dx, 4*8+6
-                        mov   cx, 96
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   old_selected, 0
-                        call  DrawAllMenuOpts
-                        mov   ch, 05h
-                        mov   bx, 8*8
-                        mov   dx, 22*8
-                        mov   si, OFFSET menu_nav
-                        call  DrawString
-                        mov   bx, 262
-                        mov   dx, 174
-                        mov   si, 38
-                        mov   di, 6
-                        mov   al, 0Fh
-                        call  FillRect
-                        ret
+    mov   al, 00h
+    call  FillScreen
+    call  DrawNeonFrame
+    mov   ch, 0Dh
+    mov   bx, 14*8
+    mov   dx, 3*8
+    mov   si, OFFSET menu_title
+    call  DrawString
+    mov   bx, 12*8
+    mov   dx, 4*8+6
+    mov   cx, 96
+    mov   al, 05h
+    call  DrawHLine
+    mov   old_selected, 0
+    call  DrawAllMenuOpts
+    mov   ch, 05h
+    mov   bx, 8*8
+    mov   dx, 22*8
+    mov   si, OFFSET menu_nav
+    call  DrawString
+    mov   bx, 262
+    mov   dx, 174
+    mov   si, 38
+    mov   di, 6
+    mov   al, 0Fh
+    call  FillRect
+    ret
 DrawMainMenuStatic ENDP
 
 DrawAllMenuOpts PROC
-                        mov   bx, 10*8
-                        mov   dx, 7*8
-                        mov   si, OFFSET opt1_txt
-                        cmp   selected_opt, 1
-                        jne   dao1
-                        mov   ch, 0Dh
-                        jmp   dao1d
+        mov   bx, 10*8
+        mov   dx, 7*8
+        mov   si, OFFSET opt1_txt
+        cmp   selected_opt, 1
+        jne   dao1
+        mov   ch, 0Dh
+        jmp   dao1d
     dao1:
-                        mov   ch, 0Fh
+        mov   ch, 0Fh
     dao1d:
-                        call  DrawString
-                        mov   bx, 10*8
-                        mov   dx, 9*8
-                        mov   si, OFFSET opt2_txt
-                        cmp   selected_opt, 2
-                        jne   dao2
-                        mov   ch, 0Dh
-                        jmp   dao2d
+        call  DrawString
+        mov   bx, 10*8
+        mov   dx, 9*8
+        mov   si, OFFSET opt2_txt
+        cmp   selected_opt, 2
+        jne   dao2
+        mov   ch, 0Dh
+        jmp   dao2d
     dao2:
-                        mov   ch, 0Fh
+        mov   ch, 0Fh
     dao2d:
-                        call  DrawString
-                        mov   bx, 10*8
-                        mov   dx, 11*8
-                        mov   si, OFFSET opt3_txt
-                        cmp   selected_opt, 3
-                        jne   dao3
-                        mov   ch, 0Dh
-                        jmp   dao3d
+        call  DrawString
+        mov   bx, 10*8
+        mov   dx, 11*8
+        mov   si, OFFSET opt3_txt
+        cmp   selected_opt, 3
+        jne   dao3
+        mov   ch, 0Dh
+        jmp   dao3d
     dao3:
-                        mov   ch, 0Fh
+        mov   ch, 0Fh
     dao3d:
-                        call  DrawString
-                        mov   bx, 10*8
-                        mov   dx, 13*8
-                        mov   si, OFFSET opt4_txt
-                        cmp   selected_opt, 4
-                        jne   dao4
-                        mov   ch, 0Dh
-                        jmp   dao4d
+        call  DrawString
+        mov   bx, 10*8
+        mov   dx, 13*8
+        mov   si, OFFSET opt4_txt
+        cmp   selected_opt, 4
+        jne   dao4
+        mov   ch, 0Dh
+        jmp   dao4d
     dao4:
-                        mov   ch, 0Fh
+        mov   ch, 0Fh
     dao4d:
-                        call  DrawString
-                        ret
+        call  DrawString
+        ret
 DrawAllMenuOpts ENDP
 
 RedrawMenuHighlight PROC
-                        mov   bx, 10*8
-                        mov   ax, old_selected
-                        cmp   ax, 1
-                        je    rmh_y1
-                        cmp   ax, 2
-                        je    rmh_y2
-                        cmp   ax, 3
-                        je    rmh_y3
-                        mov   dx, 13*8
-                        mov   si, OFFSET opt4_txt
-                        jmp   rmh_clear
+        mov   bx, 10*8
+        mov   ax, old_selected
+        cmp   ax, 1
+        je    rmh_y1
+        cmp   ax, 2
+        je    rmh_y2
+        cmp   ax, 3
+        je    rmh_y3
+        mov   dx, 13*8
+        mov   si, OFFSET opt4_txt
+        jmp   rmh_clear
     rmh_y1:
-                        mov   dx, 7*8
-                        mov   si, OFFSET opt1_txt
-                        jmp   rmh_clear
+        mov   dx, 7*8
+        mov   si, OFFSET opt1_txt
+        jmp   rmh_clear
     rmh_y2:
-                        mov   dx, 9*8
-                        mov   si, OFFSET opt2_txt
-                        jmp   rmh_clear
+        mov   dx, 9*8
+        mov   si, OFFSET opt2_txt
+        jmp   rmh_clear
     rmh_y3:
-                        mov   dx, 11*8
-                        mov   si, OFFSET opt3_txt
+        mov   dx, 11*8
+        mov   si, OFFSET opt3_txt
     rmh_clear:
-                        mov   ch, 0Fh
-                        call  DrawMenuTextAt
-                        mov   bx, 10*8
-                        mov   ax, selected_opt
-                        cmp   ax, 1
-                        je    rmh_n1
-                        cmp   ax, 2
-                        je    rmh_n2
-                        cmp   ax, 3
-                        je    rmh_n3
-                        mov   dx, 13*8
-                        mov   si, OFFSET opt4_txt
-                        jmp   rmh_draw
+        mov   ch, 0Fh
+        call  DrawMenuTextAt
+        mov   bx, 10*8
+        mov   ax, selected_opt
+        cmp   ax, 1
+        je    rmh_n1
+        cmp   ax, 2
+        je    rmh_n2
+        cmp   ax, 3
+        je    rmh_n3
+        mov   dx, 13*8
+        mov   si, OFFSET opt4_txt
+        jmp   rmh_draw
     rmh_n1:
-                        mov   dx, 7*8
-                        mov   si, OFFSET opt1_txt
-                        jmp   rmh_draw
+        mov   dx, 7*8
+        mov   si, OFFSET opt1_txt
+        jmp   rmh_draw
     rmh_n2:
-                        mov   dx, 9*8
-                        mov   si, OFFSET opt2_txt
-                        jmp   rmh_draw
+        mov   dx, 9*8
+        mov   si, OFFSET opt2_txt
+        jmp   rmh_draw
     rmh_n3:
-                        mov   dx, 11*8
-                        mov   si, OFFSET opt3_txt
+        mov   dx, 11*8
+        mov   si, OFFSET opt3_txt
     rmh_draw:
-                        mov   ch, 0Dh
-                        call  DrawMenuTextAt
-                        ret
+        mov   ch, 0Dh
+        call  DrawMenuTextAt
+        ret
 RedrawMenuHighlight ENDP
 
 DrawMenuTextAt PROC
-                        push  bx
-                        sub   bx, 12
-                        cmp   ch, 0Dh
-                        jne   dmt_noarr
-                        mov   al, '>'
-                        call  DrawChar
-                        jmp   dmt_arrow_done
+        push  bx
+        sub   bx, 12
+        cmp   ch, 0Dh
+        jne   dmt_noarr
+        mov   al, '>'
+        call  DrawChar
+        jmp   dmt_arrow_done
     dmt_noarr:
-                        push  ax
-                        push  si
-                        push  di
-                        mov   al, 00h
-                        mov   si, 8
-                        mov   di, 8
-                        call  FillRect
-                        pop   di
-                        pop   si
-                        pop   ax
+        push  ax
+        push  si
+        push  di
+        mov   al, 00h
+        mov   si, 8
+        mov   di, 8
+        call  FillRect
+        pop   di
+        pop   si
+        pop   ax
     dmt_arrow_done:
-                        pop   bx
-                        call  DrawString
-                        ret
+        pop   bx
+        call  DrawString
+        ret
 DrawMenuTextAt ENDP
 
 AnimateMenuBall PROC
-                        mov   bx, ball_mx
-                        mov   dx, ball_my
-                        mov   si, 6
-                        mov   di, 6
-                        mov   al, 00h
-                        call  FillRect
-                        mov   ax, ball_mdy
-                        add   ball_my, ax
-                        cmp   ball_my, 12
-                        jg    amb_y1
-                        neg   ball_mdy
-                        mov   ball_my, 12
+        mov   bx, ball_mx
+        mov   dx, ball_my
+        mov   si, 6
+        mov   di, 6
+        mov   al, 00h
+        call  FillRect
+        mov   ax, ball_mdy
+        add   ball_my, ax
+        cmp   ball_my, 12
+        jg    amb_y1
+        neg   ball_mdy
+        mov   ball_my, 12
     amb_y1:
-                        cmp   ball_my, 166
-                        jl    amb_y2
-                        neg   ball_mdy
-                        mov   ball_my, 166
+        cmp   ball_my, 166
+        jl    amb_y2
+        neg   ball_mdy
+        mov   ball_my, 166
     amb_y2:
-                        mov   bx, ball_mx
-                        mov   dx, ball_my
-                        mov   si, 6
-                        mov   di, 6
-                        mov   al, 05h
-                        call  FillRect
-                        call  MediumDelay
-                        ret
+        mov   bx, ball_mx
+        mov   dx, ball_my
+        mov   si, 6
+        mov   di, 6
+        mov   al, 05h
+        call  FillRect
+        call  MediumDelay
+        ret
 AnimateMenuBall ENDP
 
 InstructionsScreen PROC
     ins_page1:
-                        mov   al, 00h
-                        call  FillScreen
-                        call  DrawNeonFrame
-                        mov   ch, 0Dh
-                        mov   bx, 13*8
-                        mov   dx, 2*8
-                        mov   si, OFFSET instr_title
-                        call  DrawString
-                        mov   ch, 07h
-                        mov   bx, 33*8
-                        mov   dx, 2*8
-                        mov   si, OFFSET page1_txt
-                        call  DrawString
-                        mov   bx, 10*8
-                        mov   dx, 3*8+4
-                        mov   cx, 128
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   ch, 0Dh
-                        mov   bx, 16*8
-                        mov   dx, 5*8
-                        mov   si, OFFSET ctrl_head
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 50
-                        mov   cx, 264
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   bx, 28
-                        mov   dx, 98
-                        mov   cx, 264
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   bx, 140
-                        mov   dx, 50
-                        mov   cx, 48
-                        mov   al, 05h
-                        call  DrawVLine
-                        mov   bx, 28
-                        mov   dx, 62
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Dh
-                        mov   bx, 6*8
-                        mov   dx, 53
-                        mov   si, OFFSET key_head
-                        call  DrawString
-                        mov   ch, 0Dh
-                        mov   bx, 21*8
-                        mov   dx, 53
-                        mov   si, OFFSET move_head
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 74
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Fh
-                        mov   bx, 6*8
-                        mov   dx, 65
-                        mov   si, OFFSET key_left
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 21*8
-                        mov   dx, 65
-                        mov   si, OFFSET move_left
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 86
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Fh
-                        mov   bx, 6*8
-                        mov   dx, 77
-                        mov   si, OFFSET key_right
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 21*8
-                        mov   dx, 77
-                        mov   si, OFFSET move_right
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 98
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Fh
-                        mov   bx, 6*8
-                        mov   dx, 89
-                        mov   si, OFFSET key_space
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 21*8
-                        mov   dx, 89
-                        mov   si, OFFSET move_space
-                        call  DrawString
-                        mov   ch, 0Dh
-                        mov   bx, 16*8
-                        mov   dx, 13*8+4
-                        mov   si, OFFSET obj_head
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 4*8
-                        mov   dx, 14*8+6
-                        mov   si, OFFSET obj_l1
-                        call  DrawString
-                        mov   ch, 0Dh
-                        mov   bx, 17*8
-                        mov   dx, 16*8+4
-                        mov   si, OFFSET lives_head
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 4*8
-                        mov   dx, 17*8+6
-                        mov   si, OFFSET lives_l1
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 4*8
-                        mov   dx, 18*8+6
-                        mov   si, OFFSET lives_l2
-                        call  DrawString
-                        mov   bx, 7
-                        mov   dx, 182
-                        mov   cx, 306
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   bx, 7
-                        mov   dx, 183
-                        mov   si, 306
-                        mov   di, 9
-                        mov   al, 05h
-                        call  FillRect
-                        mov   ch, 07h
-                        mov   bx, 3*8
-                        mov   dx, 184
-                        mov   si, OFFSET back_txt
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 16*8
-                        mov   dx, 184
-                        mov   si, OFFSET more_txt
-                        call  DrawString
+        mov   al, 00h
+        call  FillScreen
+        call  DrawNeonFrame
+        mov   ch, 0Dh
+        mov   bx, 13*8
+        mov   dx, 2*8
+        mov   si, OFFSET instr_title
+        call  DrawString
+        mov   ch, 07h
+        mov   bx, 33*8
+        mov   dx, 2*8
+        mov   si, OFFSET page1_txt
+        call  DrawString
+        mov   bx, 10*8
+        mov   dx, 3*8+4
+        mov   cx, 128
+        mov   al, 05h
+        call  DrawHLine
+        mov   ch, 0Dh
+        mov   bx, 16*8
+        mov   dx, 5*8
+        mov   si, OFFSET ctrl_head
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 50
+        mov   cx, 264
+        mov   al, 05h
+        call  DrawHLine
+        mov   bx, 28
+        mov   dx, 98
+        mov   cx, 264
+        mov   al, 05h
+        call  DrawHLine
+        mov   bx, 140
+        mov   dx, 50
+        mov   cx, 48
+        mov   al, 05h
+        call  DrawVLine
+        mov   bx, 28
+        mov   dx, 62
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Dh
+        mov   bx, 6*8
+        mov   dx, 53
+        mov   si, OFFSET key_head
+        call  DrawString
+        mov   ch, 0Dh
+        mov   bx, 21*8
+        mov   dx, 53
+        mov   si, OFFSET move_head
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 74
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Fh
+        mov   bx, 6*8
+        mov   dx, 65
+        mov   si, OFFSET key_left
+        call  DrawString
+        mov   ch, 0Fh
+        mov   bx, 21*8
+        mov   dx, 65
+        mov   si, OFFSET move_left
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 86
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Fh
+        mov   bx, 6*8
+        mov   dx, 77
+        mov   si, OFFSET key_right
+        call  DrawString
+        mov   ch, 0Fh
+        mov   bx, 21*8
+        mov   dx, 77
+        mov   si, OFFSET move_right
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 98
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Fh
+        mov   bx, 6*8
+        mov   dx, 89
+        mov   si, OFFSET key_space
+        call  DrawString
+        mov   ch, 0Fh
+        mov   bx, 21*8
+        mov   dx, 89
+        mov   si, OFFSET move_space
+        call  DrawString
+        mov   ch, 0Dh
+        mov   bx, 16*8
+        mov   dx, 13*8+4
+        mov   si, OFFSET obj_head
+        call  DrawString
+        mov   ch, 0Fh
+        mov   bx, 4*8
+        mov   dx, 14*8+6
+        mov   si, OFFSET obj_l1
+        call  DrawString
+        mov   ch, 0Dh
+        mov   bx, 17*8
+        mov   dx, 16*8+4
+        mov   si, OFFSET lives_head
+        call  DrawString
+        mov   ch, 0Fh
+        mov   bx, 4*8
+        mov   dx, 17*8+6
+        mov   si, OFFSET lives_l1
+        call  DrawString
+        mov   ch, 0Fh
+        mov   bx, 4*8
+        mov   dx, 18*8+6
+        mov   si, OFFSET lives_l2
+        call  DrawString
+        mov   bx, 7
+        mov   dx, 182
+        mov   cx, 306
+        mov   al, 05h
+        call  DrawHLine
+        mov   bx, 7
+        mov   dx, 183
+        mov   si, 306
+        mov   di, 9
+        mov   al, 05h
+        call  FillRect
+        mov   ch, 07h
+        mov   bx, 3*8
+        mov   dx, 184
+        mov   si, OFFSET back_txt
+        call  DrawString
+        mov   ch, 0Fh
+        mov   bx, 16*8
+        mov   dx, 184
+        mov   si, OFFSET more_txt
+        call  DrawString
     ins_p1_wait:
-                        mov   ah, 00h
-                        int   16h
-                        cmp   al, 13
-                        je    ins_page2
-                        cmp   al, 27
-                        je    ins_exit
-                        jmp   ins_p1_wait
+        mov   ah, 00h
+        int   16h
+        cmp   al, 13
+        je    ins_page2
+        cmp   al, 27
+        je    ins_exit
+        jmp   ins_p1_wait
     ins_page2:
-                        mov   al, 00h
-                        call  FillScreen
-                        call  DrawNeonFrame
-                        mov   ch, 0Dh
-                        mov   bx, 13*8
-                        mov   dx, 2*8
-                        mov   si, OFFSET instr_title
-                        call  DrawString
-                        mov   ch, 07h
-                        mov   bx, 33*8
-                        mov   dx, 2*8
-                        mov   si, OFFSET page2_txt
-                        call  DrawString
-                        mov   bx, 10*8
-                        mov   dx, 3*8+4
-                        mov   cx, 128
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   ch, 0Dh
-                        mov   bx, 16*8
-                        mov   dx, 5*8
-                        mov   si, OFFSET bonus_head
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 4*8
-                        mov   dx, 6*8+4
-                        mov   si, OFFSET bonus_l1
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 64
-                        mov   cx, 264
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   bx, 28
-                        mov   dx, 136
-                        mov   cx, 264
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   bx, 130
-                        mov   dx, 64
-                        mov   cx, 72
-                        mov   al, 05h
-                        call  DrawVLine
-                        mov   bx, 28
-                        mov   dx, 76
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Dh
-                        mov   bx, 6*8
-                        mov   dx, 67
-                        mov   si, OFFSET color_head
-                        call  DrawString
-                        mov   ch, 0Dh
-                        mov   bx, 20*8
-                        mov   dx, 67
-                        mov   si, OFFSET effect_head
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 88
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Bh
-                        mov   bx, 6*8
-                        mov   dx, 79
-                        mov   si, OFFSET b_cyan
-                        call  DrawString
-                        mov   ch, 0Bh
-                        mov   bx, 20*8
-                        mov   dx, 79
-                        mov   si, OFFSET b_cyan_eff
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 100
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Ch
-                        mov   bx, 6*8
-                        mov   dx, 91
-                        mov   si, OFFSET b_red
-                        call  DrawString
-                        mov   ch, 0Ch
-                        mov   bx, 20*8
-                        mov   dx, 91
-                        mov   si, OFFSET b_red_eff
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 112
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Ah
-                        mov   bx, 6*8
-                        mov   dx, 103
-                        mov   si, OFFSET b_green
-                        call  DrawString
-                        mov   ch, 0Ah
-                        mov   bx, 20*8
-                        mov   dx, 103
-                        mov   si, OFFSET b_green_eff
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 124
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Eh
-                        mov   bx, 6*8
-                        mov   dx, 115
-                        mov   si, OFFSET b_yellow
-                        call  DrawString
-                        mov   ch, 0Eh
-                        mov   bx, 20*8
-                        mov   dx, 115
-                        mov   si, OFFSET b_yellow_eff
-                        call  DrawString
-                        mov   bx, 28
-                        mov   dx, 136
-                        mov   cx, 264
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Dh
-                        mov   bx, 6*8
-                        mov   dx, 127
-                        mov   si, OFFSET b_purple
-                        call  DrawString
-                        mov   ch, 0Dh
-                        mov   bx, 20*8
-                        mov   dx, 127
-                        mov   si, OFFSET b_purple_eff
-                        call  DrawString
-                        mov   ch, 05h
-                        mov   bx, 4*8
-                        mov   dx, 148
-                        mov   si, OFFSET bonus_note
-                        call  DrawString
-                        mov   bx, 7
-                        mov   dx, 182
-                        mov   cx, 306
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   bx, 7
-                        mov   dx, 183
-                        mov   si, 306
-                        mov   di, 9
-                        mov   al, 05h
-                        call  FillRect
-                        mov   ch, 07h
-                        mov   bx, 3*8
-                        mov   dx, 184
-                        mov   si, OFFSET back_txt
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 18*8
-                        mov   dx, 184
-                        mov   si, OFFSET esc_p2_txt
-                        call  DrawString
+        mov   al, 00h
+        call  FillScreen
+        call  DrawNeonFrame
+        mov   ch, 0Dh
+        mov   bx, 13*8
+        mov   dx, 2*8
+        mov   si, OFFSET instr_title
+        call  DrawString
+        mov   ch, 07h
+        mov   bx, 33*8
+        mov   dx, 2*8
+        mov   si, OFFSET page2_txt
+        call  DrawString
+        mov   bx, 10*8
+        mov   dx, 3*8+4
+        mov   cx, 128
+        mov   al, 05h
+        call  DrawHLine
+        mov   ch, 0Dh
+        mov   bx, 16*8
+        mov   dx, 5*8
+        mov   si, OFFSET bonus_head
+        call  DrawString
+        mov   ch, 0Fh
+        mov   bx, 4*8
+        mov   dx, 6*8+4
+        mov   si, OFFSET bonus_l1
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 64
+        mov   cx, 264
+        mov   al, 05h
+        call  DrawHLine
+        mov   bx, 28
+        mov   dx, 136
+        mov   cx, 264
+        mov   al, 05h
+        call  DrawHLine
+        mov   bx, 130
+        mov   dx, 64
+        mov   cx, 72
+        mov   al, 05h
+        call  DrawVLine
+        mov   bx, 28
+        mov   dx, 76
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Dh
+        mov   bx, 6*8
+        mov   dx, 67
+        mov   si, OFFSET color_head
+        call  DrawString
+        mov   ch, 0Dh
+        mov   bx, 20*8
+        mov   dx, 67
+        mov   si, OFFSET effect_head
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 88
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Bh
+        mov   bx, 6*8
+        mov   dx, 79
+        mov   si, OFFSET b_cyan
+        call  DrawString
+        mov   ch, 0Bh
+        mov   bx, 20*8
+        mov   dx, 79
+        mov   si, OFFSET b_cyan_eff
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 100
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Ch
+        mov   bx, 6*8
+        mov   dx, 91
+        mov   si, OFFSET b_red
+        call  DrawString
+        mov   ch, 0Ch
+        mov   bx, 20*8
+        mov   dx, 91
+        mov   si, OFFSET b_red_eff
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 112
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Ah
+        mov   bx, 6*8
+        mov   dx, 103
+        mov   si, OFFSET b_green
+        call  DrawString
+        mov   ch, 0Ah
+        mov   bx, 20*8
+        mov   dx, 103
+        mov   si, OFFSET b_green_eff
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 124
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Eh
+        mov   bx, 6*8
+        mov   dx, 115
+        mov   si, OFFSET b_yellow
+        call  DrawString
+        mov   ch, 0Eh
+        mov   bx, 20*8
+        mov   dx, 115
+        mov   si, OFFSET b_yellow_eff
+        call  DrawString
+        mov   bx, 28
+        mov   dx, 136
+        mov   cx, 264
+        mov   al, 01h
+        call  DrawHLine
+        mov   ch, 0Dh
+        mov   bx, 6*8
+        mov   dx, 127
+        mov   si, OFFSET b_purple
+        call  DrawString
+        mov   ch, 0Dh
+        mov   bx, 20*8
+        mov   dx, 127
+        mov   si, OFFSET b_purple_eff
+        call  DrawString
+        mov   ch, 05h
+        mov   bx, 4*8
+        mov   dx, 148
+        mov   si, OFFSET bonus_note
+        call  DrawString
+        mov   bx, 7
+        mov   dx, 182
+        mov   cx, 306
+        mov   al, 05h
+        call  DrawHLine
+        mov   bx, 7
+        mov   dx, 183
+        mov   si, 306
+        mov   di, 9
+        mov   al, 05h
+        call  FillRect
+        mov   ch, 07h
+        mov   bx, 3*8
+        mov   dx, 184
+        mov   si, OFFSET back_txt
+        call  DrawString
+        mov   ch, 0Fh
+        mov   bx, 18*8
+        mov   dx, 184
+        mov   si, OFFSET esc_p2_txt
+        call  DrawString
     ins_p2_wait:
-                        mov   ah, 00h
-                        int   16h
-                        cmp   al, 27
-                        je    ins_exit
-                        cmp   al, 13
-                        je    ins_page1
-                        jmp   ins_p2_wait
+        mov   ah, 00h
+        int   16h
+        cmp   al, 27
+        je    ins_exit
+        cmp   al, 13
+        je    ins_page1
+        jmp   ins_p2_wait
     ins_exit:
-                        ret
+        ret
 InstructionsScreen ENDP
 
 HighScoreScreen PROC
-                        mov   al, 00h
-                        call  FillScreen
-                        call  DrawNeonFrame
-                        mov   ch, 0Dh
-                        mov   bx, 13*8
-                        mov   dx, 2*8
-                        mov   si, OFFSET hs_title
-                        call  DrawString
-                        mov   bx, 8*8
-                        mov   dx, 3*8+6
-                        mov   cx, 192
-                        mov   al, 05h
-                        call  DrawHLine
-                        mov   ch, 03h
-                        mov   bx, 4*8
-                        mov   dx, 5*8
-                        mov   si, OFFSET hs_hdr
-                        call  DrawString
-                        mov   bx, 4*8
-                        mov   dx, 6*8+2
-                        mov   cx, 240
-                        mov   al, 01h
-                        call  DrawHLine
-                        mov   ch, 0Eh
-                        mov   bx, 4*8
-                        mov   dx, 8*8
-                        mov   si, OFFSET hs1_name
-                        call  DrawString
-                        mov   ch, 0Eh
-                        mov   bx, 18*8
-                        mov   dx, 8*8
-                        mov   si, OFFSET hs1_score
-                        call  DrawString
-                        mov   ch, 0Eh
-                        mov   bx, 30*8
-                        mov   dx, 8*8
-                        mov   si, OFFSET hs1_rank
-                        call  DrawString
-                        mov   ch, 07h
-                        mov   bx, 4*8
-                        mov   dx, 10*8
-                        mov   si, OFFSET hs2_name
-                        call  DrawString
-                        mov   ch, 07h
-                        mov   bx, 18*8
-                        mov   dx, 10*8
-                        mov   si, OFFSET hs2_score
-                        call  DrawString
-                        mov   ch, 07h
-                        mov   bx, 30*8
-                        mov   dx, 10*8
-                        mov   si, OFFSET hs2_rank
-                        call  DrawString
-                        mov   ch, 06h
-                        mov   bx, 4*8
-                        mov   dx, 12*8
-                        mov   si, OFFSET hs3_name
-                        call  DrawString
-                        mov   ch, 06h
-                        mov   bx, 18*8
-                        mov   dx, 12*8
-                        mov   si, OFFSET hs3_score
-                        call  DrawString
-                        mov   ch, 06h
-                        mov   bx, 30*8
-                        mov   dx, 12*8
-                        mov   si, OFFSET hs3_rank
-                        call  DrawString
-                        mov   ch, 06h
-                        mov   bx, 4*8
-                        mov   dx, 14*8
-                        mov   si, OFFSET hs4_name
-                        call  DrawString
-                        mov   ch, 06h
-                        mov   bx, 18*8
-                        mov   dx, 14*8
-                        mov   si, OFFSET hs4_score
-                        call  DrawString
-                        mov   ch, 06h
-                        mov   bx, 30*8
-                        mov   dx, 14*8
-                        mov   si, OFFSET hs4_rank
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 4*8
-                        mov   dx, 16*8
-                        mov   si, OFFSET hs5_name
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 18*8
-                        mov   dx, 16*8
-                        mov   si, OFFSET hs5_score
-                        call  DrawString
-                        mov   ch, 0Fh
-                        mov   bx, 30*8
-                        mov   dx, 16*8
-                        mov   si, OFFSET hs5_rank
-                        call  DrawString
-                        mov   ch, 07h
-                        mov   bx, 6*8
-                        mov   dx, 22*8
-                        mov   si, OFFSET return_msg
-                        call  DrawString
+    mov   al, 00h
+    call  FillScreen
+    call  DrawNeonFrame
+    mov   ch, 0Dh
+    mov   bx, 13*8
+    mov   dx, 2*8
+    mov   si, OFFSET hs_title
+    call  DrawString
+    mov   bx, 8*8
+    mov   dx, 3*8+6
+    mov   cx, 192
+    mov   al, 05h
+    call  DrawHLine
+    mov   ch, 03h
+    mov   bx, 4*8
+    mov   dx, 5*8
+    mov   si, OFFSET hs_hdr
+    call  DrawString
+    mov   bx, 4*8
+    mov   dx, 6*8+2
+    mov   cx, 240
+    mov   al, 01h
+    call  DrawHLine
+    mov   ch, 0Eh
+    mov   bx, 4*8
+    mov   dx, 8*8
+    mov   si, OFFSET hs1_name
+    call  DrawString
+    mov   ch, 0Eh
+    mov   bx, 18*8
+    mov   dx, 8*8
+    mov   si, OFFSET hs1_score
+    call  DrawString
+    mov   ch, 0Eh
+    mov   bx, 30*8
+    mov   dx, 8*8
+    mov   si, OFFSET hs1_rank
+    call  DrawString
+    mov   ch, 07h
+    mov   bx, 4*8
+    mov   dx, 10*8
+    mov   si, OFFSET hs2_name
+    call  DrawString
+    mov   ch, 07h
+    mov   bx, 18*8
+    mov   dx, 10*8
+    mov   si, OFFSET hs2_score
+    call  DrawString
+    mov   ch, 07h
+    mov   bx, 30*8
+    mov   dx, 10*8
+    mov   si, OFFSET hs2_rank
+    call  DrawString
+    mov   ch, 06h
+    mov   bx, 4*8
+    mov   dx, 12*8
+    mov   si, OFFSET hs3_name
+    call  DrawString
+    mov   ch, 06h
+    mov   bx, 18*8
+    mov   dx, 12*8
+    mov   si, OFFSET hs3_score
+    call  DrawString
+    mov   ch, 06h
+    mov   bx, 30*8
+    mov   dx, 12*8
+    mov   si, OFFSET hs3_rank
+    call  DrawString
+    mov   ch, 06h
+    mov   bx, 4*8
+    mov   dx, 14*8
+    mov   si, OFFSET hs4_name
+    call  DrawString
+    mov   ch, 06h
+    mov   bx, 18*8
+    mov   dx, 14*8
+    mov   si, OFFSET hs4_score
+    call  DrawString
+    mov   ch, 06h
+    mov   bx, 30*8
+    mov   dx, 14*8
+    mov   si, OFFSET hs4_rank
+    call  DrawString
+    mov   ch, 0Fh
+    mov   bx, 4*8
+    mov   dx, 16*8
+    mov   si, OFFSET hs5_name
+    call  DrawString
+    mov   ch, 0Fh
+    mov   bx, 18*8
+    mov   dx, 16*8
+    mov   si, OFFSET hs5_score
+    call  DrawString
+    mov   ch, 0Fh
+    mov   bx, 30*8
+    mov   dx, 16*8
+    mov   si, OFFSET hs5_rank
+    call  DrawString
+    mov   ch, 07h
+    mov   bx, 6*8
+    mov   dx, 22*8
+    mov   si, OFFSET return_msg
+    call  DrawString
     hs_wait:
-                        mov   ah, 00h
-                        int   16h
-                        ret
+        mov   ah, 00h
+        int   16h
+        ret
 HighScoreScreen ENDP
 
 ;======================================================================
 ; DRAWING UTILITIES
 ;======================================================================
 FillScreen PROC
-                        push  ax
-                        push  cx
-                        push  di
-                        push  es
-                        mov   cx, 0A000h
-                        mov   es, cx
-                        xor   di, di
-                        mov   cx, 320*200
-                        rep   stosb
-                        pop   es
-                        pop   di
-                        pop   cx
-                        pop   ax
-                        ret
+    push  ax
+    push  cx
+    push  di
+    push  es
+    mov   cx, 0A000h
+    mov   es, cx
+    xor   di, di
+    mov   cx, 320*200
+    rep   stosb
+    pop   es
+    pop   di
+    pop   cx
+    pop   ax
+    ret
 FillScreen ENDP
 
 DrawHLine PROC
-                        push  ax
-                        push  bx
-                        push  cx
-                        push  dx
-                        push  di
-                        push  es
-                        mov   di, 0A000h
-                        mov   es, di
-                        push  ax
-                        mov   ax, dx
-                        mov   di, 320
-                        mul   di
-                        add   ax, bx
-                        mov   di, ax
-                        pop   ax
-                        rep   stosb
-                        pop   es
-                        pop   di
-                        pop   dx
-                        pop   cx
-                        pop   bx
-                        pop   ax
-                        ret
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  di
+    push  es
+    mov   di, 0A000h
+    mov   es, di
+    push  ax
+    mov   ax, dx
+    mov   di, 320
+    mul   di
+    add   ax, bx
+    mov   di, ax
+    pop   ax
+    rep   stosb
+    pop   es
+    pop   di
+    pop   dx
+    pop   cx
+    pop   bx
+    pop   ax
+    ret
 DrawHLine ENDP
 
 FillRect PROC
-                        push  ax
-                        push  bx
-                        push  cx
-                        push  dx
-                        push  si
-                        push  di
-                        mov   cx, si
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  si
+    push  di
+    mov   cx, si
     fr_loop:
-                        push  dx
-                        call  DrawHLine
-                        pop   dx
-                        inc   dx
-                        dec   di
-                        jnz   fr_loop
-                        pop   di
-                        pop   si
-                        pop   dx
-                        pop   cx
-                        pop   bx
-                        pop   ax
-                        ret
+        push  dx
+        call  DrawHLine
+        pop   dx
+        inc   dx
+        dec   di
+        jnz   fr_loop
+        pop   di
+        pop   si
+        pop   dx
+        pop   cx
+        pop   bx
+        pop   ax
+        ret
 FillRect ENDP
 
 DrawRect PROC
-                        push  ax
-                        push  bx
-                        push  cx
-                        push  dx
-                        push  si
-                        push  di
-                        mov   cx, si
-                        call  DrawHLine
-                        push  dx
-                        add   dx, di
-                        dec   dx
-                        call  DrawHLine
-                        pop   dx
-                        push  dx
-                        push  si
-                        mov   cx, 1
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  si
+    push  di
+    mov   cx, si
+    call  DrawHLine
+    push  dx
+    add   dx, di
+    dec   dx
+    call  DrawHLine
+    pop   dx
+    push  dx
+    push  si
+    mov   cx, 1
     dr_vert:
-                        call  DrawHLine
-                        push  bx
-                        add   bx, si
-                        dec   bx
-                        call  DrawHLine
-                        pop   bx
-                        inc   dx
-                        dec   di
-                        jnz   dr_vert
-                        pop   si
-                        pop   dx
-                        pop   di
-                        pop   si
-                        pop   dx
-                        pop   cx
-                        pop   bx
-                        pop   ax
-                        ret
+        call  DrawHLine
+        push  bx
+        add   bx, si
+        dec   bx
+        call  DrawHLine
+        pop   bx
+        inc   dx
+        dec   di
+        jnz   dr_vert
+        pop   si
+        pop   dx
+        pop   di
+        pop   si
+        pop   dx
+        pop   cx
+        pop   bx
+        pop   ax
+        ret
 DrawRect ENDP
 
 DrawNeonFrame PROC
-                        push  ax
-                        push  bx
-                        push  dx
-                        push  si
-                        push  di
-                        mov   bx, 4
-                        mov   dx, 4
-                        mov   si, 312
-                        mov   di, 190
-                        mov   al, 05h
-                        call  DrawRect
-                        mov   bx, 7
-                        mov   dx, 7
-                        mov   si, 306
-                        mov   di, 184
-                        mov   al, 01h
-                        call  DrawRect
-                        pop   di
-                        pop   si
-                        pop   dx
-                        pop   bx
-                        pop   ax
-                        ret
+    push  ax
+    push  bx
+    push  dx
+    push  si
+    push  di
+    mov   bx, 4
+    mov   dx, 4
+    mov   si, 312
+    mov   di, 190
+    mov   al, 05h
+    call  DrawRect
+    mov   bx, 7
+    mov   dx, 7
+    mov   si, 306
+    mov   di, 184
+    mov   al, 01h
+    call  DrawRect
+    pop   di
+    pop   si
+    pop   dx
+    pop   bx
+    pop   ax
+    ret
 DrawNeonFrame ENDP
 
 DrawVLine PROC
-                        push  ax
-                        push  bx
-                        push  cx
-                        push  dx
-                        push  di
-                        push  es
-                        mov   di, 0A000h
-                        mov   es, di
-                        push  ax
-                        mov   ax, dx
-                        mov   di, 320
-                        mul   di
-                        add   ax, bx
-                        mov   di, ax
-                        pop   ax
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  di
+    push  es
+    mov   di, 0A000h
+    mov   es, di
+    push  ax
+    mov   ax, dx
+    mov   di, 320
+    mul   di
+    add   ax, bx
+    mov   di, ax
+    pop   ax
     dvl_loop:
-                        mov   es:[di], al
-                        add   di, 320
-                        dec   cx
-                        jnz   dvl_loop
-                        pop   es
-                        pop   di
-                        pop   dx
-                        pop   cx
-                        pop   bx
-                        pop   ax
-                        ret
+        mov   es:[di], al
+        add   di, 320
+        dec   cx
+        jnz   dvl_loop
+        pop   es
+        pop   di
+        pop   dx
+        pop   cx
+        pop   bx
+        pop   ax
+        ret
 DrawVLine ENDP
 
 DrawBricks PROC
-                        push  ax
-                        push  bx
-                        push  cx
-                        push  dx
-                        push  si
-                        push  di
-                        mov   dx, 6
-                        mov   ch, 0
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  si
+    push  di
+    mov   dx, 6
+    mov   ch, 0
     db_row:
-                        mov   bx, 4
-                        mov   cl, 0
+        mov   bx, 4
+        mov   cl, 0
     db_col:
-                        mov   al, ch
-                        xor   al, cl
-                        and   al, 03h
-                        cmp   al, 0
-                        je    db_mag
-                        cmp   al, 1
-                        je    db_dblue
-                        cmp   al, 2
-                        je    db_dmag
-                        mov   al, 03h
-                        jmp   db_draw
+        mov   al, ch
+        xor   al, cl
+        and   al, 03h
+        cmp   al, 0
+        je    db_mag
+        cmp   al, 1
+        je    db_dblue
+        cmp   al, 2
+        je    db_dmag
+        mov   al, 03h
+        jmp   db_draw
     db_mag:
-                        mov   al, 0Dh
-                        jmp   db_draw
+        mov   al, 0Dh
+        jmp   db_draw
     db_dblue:
-                        mov   al, 01h
-                        jmp   db_draw
+        mov   al, 01h
+        jmp   db_draw
     db_dmag:
-                        mov   al, 05h
+        mov   al, 05h
     db_draw:
-                        mov   si, 18
-                        mov   di, 7
-                        call  FillRect
-                        add   bx, 20
-                        inc   cl
-                        cmp   cl, 16
-                        jl    db_col
-                        add   dx, 9
-                        inc   ch
-                        cmp   ch, 4
-                        jl    db_row
-                        pop   di
-                        pop   si
-                        pop   dx
-                        pop   cx
-                        pop   bx
-                        pop   ax
-                        ret
+        mov   si, 18
+        mov   di, 7
+        call  FillRect
+        add   bx, 20
+        inc   cl
+        cmp   cl, 16
+        jl    db_col
+        add   dx, 9
+        inc   ch
+        cmp   ch, 4
+        jl    db_row
+        pop   di
+        pop   si
+        pop   dx
+        pop   cx
+        pop   bx
+        pop   ax
+        ret
 DrawBricks ENDP
 
 CharToIndex PROC
-                        cmp   al, 3
-                        je    cti_heart
-                        cmp   al, ' '
-                        je    cti_space
-                        cmp   al, '|'
-                        je    cti_pipe
-                        cmp   al, '-'
-                        je    cti_dash
-                        cmp   al, '>'
-                        je    cti_gt
-                        cmp   al, ':'
-                        je    cti_colon
-                        cmp   al, '!'
-                        je    cti_excl
-                        cmp   al, '.'
-                        je    cti_dot
-                        cmp   al, '/'
-                        je    cti_slash
-                        cmp   al, '1'
-                        je    cti_1
-                        cmp   al, '2'
-                        je    cti_2
-                        cmp   al, '3'
-                        je    cti_3
-                        cmp   al, '4'
-                        je    cti_4
-                        cmp   al, '5'
-                        je    cti_5
-                        cmp   al, '_'
-                        je    cti_uscore
-                        cmp   al, '0'
-                        je    cti_0
-                        cmp   al, '6'
-                        je    cti_6
-                        cmp   al, '7'
-                        je    cti_7
-                        cmp   al, '8'
-                        je    cti_8
-                        cmp   al, '9'
-                        je    cti_9
-                        cmp   al, 'A'
-                        jb    cti_unknown
-                        cmp   al, 'Z'
-                        jbe   cti_upper
-                        cmp   al, 'a'
-                        jb    cti_unknown
-                        cmp   al, 'z'
-                        ja    cti_unknown
-                        sub   al, 'a'-'A'
-                        jmp   cti_upper
+    cmp   al, 3
+    je    cti_heart
+    cmp   al, ' '
+    je    cti_space
+    cmp   al, '|'
+    je    cti_pipe
+    cmp   al, '-'
+    je    cti_dash
+    cmp   al, '>'
+    je    cti_gt
+    cmp   al, ':'
+    je    cti_colon
+    cmp   al, '!'
+    je    cti_excl
+    cmp   al, '.'
+    je    cti_dot
+    cmp   al, '/'
+    je    cti_slash
+    cmp   al, '1'
+    je    cti_1
+    cmp   al, '2'
+    je    cti_2
+    cmp   al, '3'
+    je    cti_3
+    cmp   al, '4'
+    je    cti_4
+    cmp   al, '5'
+    je    cti_5
+    cmp   al, '_'
+    je    cti_uscore
+    cmp   al, '0'
+    je    cti_0
+    cmp   al, '6'
+    je    cti_6
+    cmp   al, '7'
+    je    cti_7
+    cmp   al, '8'
+    je    cti_8
+    cmp   al, '9'
+    je    cti_9
+    cmp   al, 'A'
+    jb    cti_unknown
+    cmp   al, 'Z'
+    jbe   cti_upper
+    cmp   al, 'a'
+    jb    cti_unknown
+    cmp   al, 'z'
+    ja    cti_unknown
+    sub   al, 'a'-'A'
+    jmp   cti_upper
     cti_unknown:
-                        xor   ax, ax
-                        ret
+        xor   ax, ax
+        ret
     cti_upper:
-                        sub   al, 'A'
-                        mov   ah, 0
-                        inc   ax
-                        ret
+        sub   al, 'A'
+        mov   ah, 0
+        inc   ax
+        ret
     cti_space:
-                        xor   ax, ax
-                        ret
+        xor   ax, ax
+        ret
     cti_pipe:
-                        mov   ax, 27
-                        ret
+        mov   ax, 27
+        ret
     cti_dash:
-                        mov   ax, 28
-                        ret
+        mov   ax, 28
+        ret
     cti_gt:
-                        mov   ax, 29
-                        ret
+        mov   ax, 29
+        ret
     cti_colon:
-                        mov   ax, 30
-                        ret
+        mov   ax, 30
+        ret
     cti_excl:
-                        mov   ax, 31
-                        ret
+        mov   ax, 31
+        ret
     cti_1:
-                        mov   ax, 32
-                        ret
+        mov   ax, 32
+        ret
     cti_2:
-                        mov   ax, 33
-                        ret
+        mov   ax, 33
+        ret
     cti_3:
-                        mov   ax, 34
-                        ret
+        mov   ax, 34
+        ret
     cti_4:
-                        mov   ax, 35
-                        ret
+        mov   ax, 35
+        ret
     cti_5:
-                        mov   ax, 36
-                        ret
+        mov   ax, 36
+        ret
     cti_slash:
-                        mov   ax, 37
-                        ret
+        mov   ax, 37
+        ret
     cti_dot:
-                        mov   ax, 38
-                        ret
+        mov   ax, 38
+        ret
     cti_uscore:
-                        mov   ax, 39
-                        ret
+        mov   ax, 39
+        ret
     cti_0:
-                        mov   ax, 40
-                        ret
+        mov   ax, 40
+        ret
     cti_6:
-                        mov   ax, 41
-                        ret
+        mov   ax, 41
+        ret
     cti_7:
-                        mov   ax, 42
-                        ret
+        mov   ax, 42
+        ret
     cti_8:
-                        mov   ax, 43
-                        ret
+        mov   ax, 43
+        ret
     cti_9:
-                        mov   ax, 44
-                        ret
+        mov   ax, 44
+        ret
     cti_heart:
-                        mov   ax, 45
-                        ret
+        mov   ax, 45
+        ret
 CharToIndex ENDP
 
 DrawChar PROC
-                        push  ax
-                        push  bx
-                        push  cx
-                        push  dx
-                        push  si
-                        push  di
-                        mov   [char_color], ch
-                        call  CharToIndex
-                        shl   ax, 1
-                        shl   ax, 1
-                        shl   ax, 1
-                        mov   si, OFFSET font_table
-                        add   si, ax
-                        mov   ax, 0A000h
-                        mov   es, ax
-                        push  bx
-                        mov   ax, dx
-                        mov   bx, 320
-                        mul   bx
-                        pop   bx
-                        add   ax, bx
-                        mov   di, ax
-                        mov   cx, 8
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  si
+    push  di
+    mov   [char_color], ch
+    call  CharToIndex
+    shl   ax, 1
+    shl   ax, 1
+    shl   ax, 1
+    mov   si, OFFSET font_table
+    add   si, ax
+    mov   ax, 0A000h
+    mov   es, ax
+    push  bx
+    mov   ax, dx
+    mov   bx, 320
+    mul   bx
+    pop   bx
+    add   ax, bx
+    mov   di, ax
+    mov   cx, 8
     dc_row:
-                        mov   al, [si]
-                        push  di
-                        push  cx
-                        mov   cx, 8
+        mov   al, [si]
+        push  di
+        push  cx
+        mov   cx, 8
     dc_pix:
-                        shl   al, 1
-                        jnc   dc_skip
-                        mov   bl, [char_color]
-                        mov   es:[di], bl
+        shl   al, 1
+        jnc   dc_skip
+        mov   bl, [char_color]
+        mov   es:[di], bl
     dc_skip:
-                        inc   di
-                        loop  dc_pix
-                        pop   cx
-                        pop   di
-                        add   di, 320
-                        inc   si
-                        loop  dc_row
-                        pop   di
-                        pop   si
-                        pop   dx
-                        pop   cx
-                        pop   bx
-                        pop   ax
-                        ret
+        inc   di
+        loop  dc_pix
+        pop   cx
+        pop   di
+        add   di, 320
+        inc   si
+        loop  dc_row
+        pop   di
+        pop   si
+        pop   dx
+        pop   cx
+        pop   bx
+        pop   ax
+        ret
 DrawChar ENDP
 
 DrawString PROC
-                        push  ax
+    push  ax
     ds_next:
-                        lodsb
-                        cmp   al, 0
-                        je    ds_done
-                        call  DrawChar
-                        add   bx, 8
-                        jmp   ds_next
+        lodsb
+        cmp   al, 0
+        je    ds_done
+        call  DrawChar
+        add   bx, 8
+        jmp   ds_next
     ds_done:
-                        pop   ax
-                        ret
+        pop   ax
+        ret
 DrawString ENDP
 
 MediumDelay PROC
-                        push  cx
-                        mov   cx, 12000
+    push  cx
+    mov   cx, 12000
     md_loop:
-                        loop  md_loop
-                        pop   cx
-                        ret
+        loop  md_loop
+        pop   cx
+        ret
 MediumDelay ENDP
 
 SmallDelay PROC
-                        push  cx
-                        mov   cx, 8000
+        push  cx
+        mov   cx, 8000
     sd_loop:
-                        loop  sd_loop
-                        pop   cx
-                        ret
+        loop  sd_loop
+        pop   cx
+        ret
 SmallDelay ENDP
 
 END main
