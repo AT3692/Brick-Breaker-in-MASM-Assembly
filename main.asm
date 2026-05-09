@@ -12,7 +12,7 @@
     paddle_y     DW         185                                                                                       ; Paddle Y position
     paddle_width DW         70                                                                                        ; Paddle width
     paddle_old_x DW         125
-    paddle_speed DW         10                                                                                        ; paddle speed variation                                                                              ; Previous paddle X for clearing
+    paddle_speed DW         14                                                                                        ; paddle speed variation                                                                              ; Previous paddle X for clearing
 
                  font_table LABEL BYTE
                  DB         00000000b, 00000000b, 00000000b, 00000000b, 00000000b, 00000000b, 00000000b, 00000000b    ; space 0
@@ -145,6 +145,19 @@
     gs_level     DB         'LEVEL: 01', 0
     gs_player    DB         'PLAYER:', 0
     gs_name      DB         21 DUP(0)
+
+    ; Ball variables
+    ball_x       DW         155                                                                                       ; Ball X position
+    ball_y       DW         170                                                                                       ; Ball Y position
+    ball_dx      DW         1                                                                                         ; Ball X direction (+1 or -1)
+    ball_dy      DW         -1                                                                                        ; Ball Y direction (+1 or -1)
+    ball_speed   DW         6                                                                                         ; Ball speed delay multiplier (higher = slower)
+    ball_launched DB        0                                                                                         ; 0 = waiting for SPACE, 1 = moving
+
+    
+
+    ; Brick state: 5 rows x 15 cols, 1=alive 0=dead
+    brick_state  DB         75 DUP(1)
 
     ; Game state for paddle demo
     game_running DB         0
@@ -498,75 +511,251 @@ GameScreenLayout PROC
                         cmp   ch, 5
                         jl    gs_rows
 
+                       
+                        ; Reset brick_state: all 75 bricks alive
+                        mov   cx, 75
+                        mov   si, OFFSET brick_state
+    gs_brick_reset:
+                        mov   BYTE PTR [si], 1
+                        inc   si
+                        loop  gs_brick_reset
+
+                        ; Initialize ball above paddle center
+                        mov   ax, paddle_x
+                        add   ax, 32
+                        mov   ball_x, ax
+                        mov   ball_y, 170
+                        mov   ball_dx, 1
+                        mov   ball_dy, -1
+                        mov   ball_launched, 0
+
                         ; Draw initial ball and paddle
-                        mov   bx, 155
-                        mov   dx, 90
+                        mov   bx, ball_x
+                        mov   dx, ball_y
                         mov   si, 6
                         mov   di, 6
-                        mov   al, 05h
+                        mov   al, 0Fh
                         call  FillRect
                         call  DrawPaddle
 
-    ; === PADDLE INPUT LOOP ===
-    gs_input_loop:
-                        mov   ah, 01h
-                        int   16h
-                        jz    gs_input_loop                ; No key, keep waiting
+    ; === MAIN GAME LOOP ===
+    ; Poll hardware keyboard port 60h every frame — no BIOS auto-repeat delay.
+    ; Scancode 39h=SPACE, 4Bh=Left, 4Dh=Right, 01h=ESC
+    gs_game_loop:
+                        ; Read hardware key state from port 60h
+                        in    al, 60h
+                        ; High bit set means key released — ignore
+                        test  al, 80h
+                        jnz   gs_key_up
 
-                        mov   ah, 00h
-                        int   16h
+                        cmp   al, 01h                      ; ESC scancode
+                        je    gs_exit
 
-                        cmp   al, 27                       ; ESC key?
-                        jne   check_left
-                        jmp   gs_exit                      ; Far jump to exit
+                        cmp   al, 39h                      ; SPACE scancode
+                        je    gs_space
 
-    check_left:
-                        cmp   ah, 4Bh                      ; Left Arrow
-                        je    do_move_left
-                        cmp   al, 'a'
-                        je    do_move_left
-                        cmp   al, 'A'
-                        je    do_move_left
-                        jmp   check_right
+                        cmp   al, 4Bh                      ; Left arrow scancode
+                        je    gs_do_left
+                        cmp   al, 1Eh                      ; A scancode
+                        je    gs_do_left
 
-    do_move_left:
+                        cmp   al, 4Dh                      ; Right arrow scancode
+                        je    gs_do_right
+                        cmp   al, 20h                      ; D scancode
+                        je    gs_do_right
+
+                        jmp   gs_no_move
+
+    gs_key_up:
+                        jmp   gs_no_move
+
+    gs_space:
+                        cmp   ball_launched, 0
+                        jne   gs_no_move
+                        mov   ball_launched, 1
+                        jmp   gs_no_move
+
+    gs_do_left:
                         mov   bx, paddle_x
                         sub   bx, paddle_speed
                         cmp   bx, 2
-                        jge   apply_move
+                        jge   gs_apply_move
                         mov   bx, 2
-                        jmp   apply_move
+                        jmp   gs_apply_move
 
-    check_right:
-                        cmp   ah, 4Dh                      ; Right Arrow
-                        je    do_move_right
-                        cmp   al, 'd'
-                        je    do_move_right
-                        cmp   al, 'D'
-                        je    do_move_right
-                        jmp   gs_input_loop
-
-    do_move_right:
+    gs_do_right:
                         mov   bx, paddle_x
                         add   bx, paddle_speed
-                        mov   ax, 318                      ; right edge margin
-                        sub   ax, paddle_width             ; left edge max position
+                        mov   ax, 318
+                        sub   ax, paddle_width
                         cmp   bx, ax
-                        jle   apply_move
-                        mov   bx, ax                       ; clamp to max
-                        jmp   apply_move
-    apply_move:
-                        cmp   bx, paddle_x
-                        je    gs_input_loop
+                        jle   gs_apply_move
+                        mov   bx, ax
 
-                        call  ClearPaddle                  ; Erase old position
-                        mov   paddle_x, bx                 ; Update coordinate
-                        call  DrawPaddle                   ; Draw new position
-                        jmp   gs_input_loop
+    gs_apply_move:
+                        cmp   bx, paddle_x
+                        je    gs_no_move
+                        call  ClearPaddle
+                        ; If ball not launched, move it with paddle
+                        cmp   ball_launched, 0
+                        jne   gs_move_paddle_only
+                        push  bx
+                        mov   bx, ball_x
+                        mov   dx, ball_y
+                        mov   si, 6
+                        mov   di, 6
+                        mov   al, 00h
+                        call  FillRect
+                        pop   bx
+                        mov   ax, bx
+                        add   ax, 32
+                        mov   ball_x, ax
+    gs_move_paddle_only:
+                        mov   paddle_x, bx
+                        call  DrawPaddle
+                        cmp   ball_launched, 0
+                        jne   gs_no_move
+                        mov   bx, ball_x
+                        mov   dx, ball_y
+                        mov   si, 6
+                        mov   di, 6
+                        mov   al, 0Fh
+                        call  FillRect
+
+    gs_no_move:
+                        ; Move ball if launched
+                        cmp   ball_launched, 0
+                        je    gs_delay
+                        call  MoveBall
+
+    gs_delay:
+                        mov   cx, ball_speed
+    gs_delay_lp:
+                        push  cx
+                        mov   cx, 10000
+    gs_delay_in:
+                        loop  gs_delay_in
+                        pop   cx
+                        loop  gs_delay_lp
+
+                        jmp   gs_game_loop
 
     gs_exit:
                         ret
 GameScreenLayout ENDP
+
+;----------------------------------------------------------------------
+; MOVE BALL: reflects off left/right walls, top brick boundary, paddle.
+; Ball is 6x6. Boundaries: left=2, right=311, top=103 (below bricks),
+; paddle top = paddle_y. Ball lost if it goes below paddle.
+;----------------------------------------------------------------------
+MoveBall PROC
+                        push  ax
+                        push  bx
+                        push  cx
+                        push  dx
+                        push  si
+                        push  di
+
+                        ; Erase ball
+                        mov   bx, ball_x
+                        mov   dx, ball_y
+                        mov   si, 6
+                        mov   di, 6
+                        mov   al, 00h
+                        call  FillRect
+
+                        ; Next position
+                        mov   ax, ball_x
+                        add   ax, ball_dx
+                        mov   bx, ax                       ; bx = new x
+
+                        mov   ax, ball_y
+                        add   ax, ball_dy
+                        mov   dx, ax                       ; dx = new y
+
+                        ; Left wall
+                        cmp   bx, 2
+                        jge   mb_right
+                        neg   ball_dx
+                        mov   bx, 2
+    mb_right:
+                        ; Right wall (right edge = bx+5, must stay <= 317)
+                        mov   ax, bx
+                        add   ax, 5
+                        cmp   ax, 317
+                        jle   mb_top
+                        neg   ball_dx
+                        mov   bx, 311
+    mb_top:
+                        ; Top boundary = bottom of brick area = y 103
+                        cmp   dx, 103
+                        jge   mb_paddle
+                        neg   ball_dy
+                        mov   dx, 103
+    mb_paddle:
+                        ; Paddle: only when moving down
+                        cmp   ball_dy, 0
+                        jl    mb_bottom
+                        ; ball bottom = dx+5 must reach paddle_y
+                        mov   ax, dx
+                        add   ax, 5
+                        cmp   ax, paddle_y
+                        jl    mb_bottom
+                        ; ball top must not be below paddle
+                        cmp   dx, paddle_y
+                        jg    mb_bottom
+                        ; horizontal overlap: ball_x in [paddle_x .. paddle_x+width)
+                        mov   cx, paddle_x
+                        cmp   bx, cx
+                        jl    mb_bottom
+                        add   cx, paddle_width
+                        cmp   bx, cx
+                        jge   mb_bottom
+                        ; hit
+                        neg   ball_dy
+                        mov   dx, paddle_y
+                        sub   dx, 6
+                        jmp   mb_draw
+    mb_bottom:
+                        ; Ball lost — fell below screen
+                        mov   ax, dx
+                        add   ax, 5
+                        cmp   ax, 199
+                        jle   mb_draw
+                        ; Reset ball to paddle
+                        mov   ball_launched, 0
+                        mov   ax, paddle_x
+                        add   ax, 32
+                        mov   ball_x, ax
+                        mov   ball_y, 170
+                        mov   ball_dx, 1
+                        mov   ball_dy, -1
+                        mov   bx, ball_x
+                        mov   dx, ball_y
+                        mov   si, 6
+                        mov   di, 6
+                        mov   al, 0Fh
+                        call  FillRect
+                        jmp   mb_done
+    mb_draw:
+                        mov   ball_x, bx
+                        mov   ball_y, dx
+                        mov   bx, ball_x
+                        mov   dx, ball_y
+                        mov   si, 6
+                        mov   di, 6
+                        mov   al, 0Fh
+                        call  FillRect
+    mb_done:
+                        pop   di
+                        pop   si
+                        pop   dx
+                        pop   cx
+                        pop   bx
+                        pop   ax
+                        ret
+MoveBall ENDP
 ;----------------------------------------------------------------------
 ; DRAW PADDLE
 ;----------------------------------------------------------------------
