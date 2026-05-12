@@ -12,7 +12,7 @@
     paddle_y     DW         185
     paddle_width DW         70
     paddle_old_x DW         125
-    paddle_speed DW         14
+    paddle_speed DW         10
 
     ; Ball variables
     ball_x       DW         155
@@ -184,6 +184,15 @@
     gs_lvlcompStr DB        'LEVEL COMPLETE!', 0
     gs_lvl2str    DB        'LEVEL: 02', 0
     temp_str     DB         10 DUP(0)
+
+    ; --- Bonus / Power-Up System ---
+    bonus_active  DB         0      ; 0=none, 1=falling
+    bonus_x       DW         0      ; current X of falling bonus
+    bonus_y       DW         0      ; current Y of falling bonus
+    bonus_type    DB         0      ; 1=slow,2=fast,3=life,4=wide,5=narrow
+    bonus_timer   DW         0      ; frames remaining for timed effect
+    bonus_effect  DB         0      ; currently active effect (0=none)
+    brick_break_count DB    0      ; counts brick breaks, spawn every 3rd
 .CODE
 
 main PROC
@@ -1111,6 +1120,10 @@ GameScreenLayout PROC
     mov   score, 0
     mov   lives_count, 3
     mov   current_level, 1
+    mov   bonus_active, 0
+    mov   bonus_effect, 0
+    mov   bonus_timer, 0
+    mov   brick_break_count, 0
 
     mov   al, 00h
     call  FillScreen
@@ -1310,8 +1323,11 @@ GameScreenLayout PROC
 
     gs_no_move:
         cmp   ball_launched, 0
-        je    gs_delay
+        je    gs_skip_bonus_too
         call  MoveBall
+    gs_skip_bonus_too:
+        call  UpdateBonus
+        call  TickBonusTimer
 
     gs_delay:
         mov   cx, ball_speed
@@ -1473,6 +1489,7 @@ MoveBall PROC
         add   score, 5
         call  UpdateScoreString
         call  RefreshScoreHUD
+        call  SpawnBonus
         neg   ball_dy
         call  CheckAllBricksDead
         jmp   mb_draw
@@ -2501,6 +2518,9 @@ ttl2_delay:
     call  DrawLevel2Bricks
 
     ; --- Reset ball and paddle ---
+    mov   bonus_active, 0
+    mov   bonus_timer, 0
+    mov   bonus_effect, 0
     mov   paddle_x, 125
     mov   paddle_old_x, 125
     call  ClearPaddle
@@ -2749,6 +2769,296 @@ sws_done:
     pop   ax
     ret
 ShowWinScreen ENDP
+
+
+; ============================================================
+; SPAWN BONUS
+; Called after each brick break. Spawns a bonus every 3rd break.
+; Bonus starts at the brick's screen position and falls down.
+; Registers used: ax, bx, dx (saved by caller via MoveBall's push/pop)
+; We must preserve bx and dx (ball new pos) so we push/pop them.
+; ============================================================
+SpawnBonus PROC
+    push  ax
+    push  bx
+    push  dx
+
+    ; Only spawn if no bonus currently falling
+    cmp   bonus_active, 1
+    je    sb_done
+
+    ; Increment break counter
+    inc   brick_break_count
+
+    ; Spawn every 3rd break
+    mov   al, brick_break_count
+    mov   ah, 0
+    mov   bl, 3
+    div   bl
+    cmp   ah, 0           ; remainder = 0 means it's the 3rd
+    jne   sb_done
+
+    ; Determine bonus type: cycle through 1-5 based on counter
+    mov   al, brick_break_count
+    mov   ah, 0
+    mov   bl, 5
+    div   bl              ; ah = remainder (0-4)
+    inc   ah              ; make it 1-5
+    mov   bonus_type, ah
+
+    ; Set bonus start position: center of screen X, just below HUD
+    ; We spawn at a fixed X=155 (mid-screen) — simple and reliable
+    mov   bonus_x, 155
+    mov   bonus_y, 120    ; start in mid play-field (visible immediately)
+    mov   bonus_active, 1
+
+    ; Draw initial bonus square
+    call  DrawBonus
+
+sb_done:
+    pop   dx
+    pop   bx
+    pop   ax
+    ret
+SpawnBonus ENDP
+
+; ============================================================
+; DRAW BONUS — draws the 8x8 colored square at bonus_x, bonus_y
+; ============================================================
+DrawBonus PROC
+    push  ax
+    push  bx
+    push  dx
+    push  si
+    push  di
+
+    ; Pick color based on bonus_type
+    mov   al, bonus_type
+    cmp   al, 1
+    jne   drawBonus_chk2
+    mov   al, 03h         ; Cyan = Slow Ball
+    jmp   drawBonus_draw
+    drawBonus_chk2:
+        cmp   al, 2
+        jne   drawBonus_chk3
+        mov   al, 04h         ; Red = Fast Ball
+        jmp   drawBonus_draw
+    drawBonus_chk3:
+        cmp   al, 3
+        jne   drawBonus_chk4
+        mov   al, 02h         ; Green = Extra Life
+        jmp   drawBonus_draw
+    drawBonus_chk4:
+        cmp   al, 4
+        jne   drawBonus_chk5
+        mov   al, 0Eh         ; Yellow = Wide Paddle
+        jmp   drawBonus_draw
+    drawBonus_chk5:
+        mov   al, 0Dh         ; Magenta = Narrow Paddle
+
+    drawBonus_draw:
+        mov   bx, bonus_x
+        mov   dx, bonus_y
+        mov   si, 8
+        mov   di, 8
+        call  FillRect
+
+        pop   di
+        pop   si
+        pop   dx
+        pop   bx
+        pop   ax
+        ret
+DrawBonus ENDP
+
+; ============================================================
+; UPDATE BONUS — called every frame
+; Erases old position, moves down by 2, checks collection/miss
+; ============================================================
+UpdateBonus PROC
+    push  ax
+    push  bx
+    push  cx
+    push  dx
+    push  si
+    push  di
+
+    cmp   bonus_active, 1
+    jne   ub_done
+
+    ; Erase bonus at current position
+    mov   bx, bonus_x
+    mov   dx, bonus_y
+    mov   si, 8
+    mov   di, 8
+    mov   al, 00h
+    call  FillRect
+
+    ; Move bonus down by 2 pixels
+    add   bonus_y, 2
+
+    ; Check if bonus reached paddle zone (Y >= paddle_y - 8)
+    mov   ax, bonus_y
+    add   ax, 8           ; bottom of bonus square
+    cmp   ax, paddle_y
+    jl    ub_check_miss   ; not at paddle yet
+
+    ; Check horizontal overlap with paddle
+    mov   ax, bonus_x
+    add   ax, 8           ; right edge of bonus
+    cmp   ax, paddle_x
+    jl    ub_miss         ; bonus right < paddle left
+
+    mov   ax, bonus_x     ; left edge of bonus
+    mov   cx, paddle_x
+    add   cx, paddle_width
+    cmp   ax, cx
+    jge   ub_miss         ; bonus left >= paddle right
+
+    ; --- COLLECTED ---
+    mov   bonus_active, 0
+    call  ApplyBonus
+    jmp   ub_done
+
+ub_check_miss:
+    ; Not at paddle yet — draw at new position
+    mov   bx, bonus_x
+    mov   dx, bonus_y
+    mov   si, 8
+    mov   di, 8
+    call  DrawBonus
+    jmp   ub_done
+
+ub_miss:
+    ; Fell below screen — cancel
+    cmp   bonus_y, 200
+    jl    ub_draw_falling
+    mov   bonus_active, 0
+    jmp   ub_done
+
+ub_draw_falling:
+    call  DrawBonus
+
+ub_done:
+    pop   di
+    pop   si
+    pop   dx
+    pop   cx
+    pop   bx
+    pop   ax
+    ret
+UpdateBonus ENDP
+
+; ============================================================
+; APPLY BONUS — applies the effect of the collected bonus
+; ============================================================
+ApplyBonus PROC
+    push  ax
+    push  bx
+
+    ; Cancel any existing timed effect first (restore defaults)
+    call  RestoreBonusEffect
+
+    mov   al, bonus_type
+    cmp   al, 1
+    jne   ab_chk2
+    ; --- Slow Ball: increase ball_speed delay (bigger = slower) ---
+    mov   ball_speed, 10   ; was 6 — higher = more delay = slower
+    mov   bonus_effect, 1
+    mov   bonus_timer, 500
+    jmp   ab_done
+
+ab_chk2:
+    cmp   al, 2
+    jne   ab_chk3
+    ; --- Fast Ball: decrease ball_speed delay ---
+    mov   ball_speed, 2    ; lower = less delay = faster
+    mov   bonus_effect, 2
+    mov   bonus_timer, 500
+    jmp   ab_done
+
+ab_chk3:
+    cmp   al, 3
+    jne   ab_chk4
+    ; --- Extra Life: +1 life (max 5) ---
+    cmp   lives_count, 5
+    jge   ab_done
+    inc   lives_count
+    call  UpdateLivesDisplay
+    ; No timer needed — permanent
+    jmp   ab_done
+
+ab_chk4:
+    cmp   al, 4
+    jne   ab_chk5
+    ; --- Wide Paddle: increase paddle width ---
+    mov   paddle_width, 100
+    call  ClearPaddle
+    call  DrawPaddle
+    mov   bonus_effect, 4
+    mov   bonus_timer, 600
+    jmp   ab_done
+
+ab_chk5:
+    ; --- Narrow Paddle: decrease paddle width ---
+    mov   paddle_width, 35
+    call  ClearPaddle
+    call  DrawPaddle
+    mov   bonus_effect, 5
+    mov   bonus_timer, 600
+
+ab_done:
+    pop   bx
+    pop   ax
+    ret
+ApplyBonus ENDP
+
+; ============================================================
+; TICK BONUS TIMER — called every frame, counts down timed effects
+; ============================================================
+TickBonusTimer PROC
+    push  ax
+
+    cmp   bonus_effect, 0
+    je    tbt_done
+    cmp   bonus_timer, 0
+    je    tbt_expired
+
+    dec   bonus_timer
+    jmp   tbt_done
+
+tbt_expired:
+    call  RestoreBonusEffect
+
+tbt_done:
+    pop   ax
+    ret
+TickBonusTimer ENDP
+
+; ============================================================
+; RESTORE BONUS EFFECT — resets ball speed and paddle to defaults
+; ============================================================
+RestoreBonusEffect PROC
+    push  ax
+
+    cmp   bonus_effect, 0
+    je    rbe_done
+
+    ; Restore ball speed
+    mov   ball_speed, 6
+
+    ; Restore paddle width
+    mov   paddle_width, 70
+    call  ClearPaddle
+    call  DrawPaddle
+
+    mov   bonus_effect, 0
+    mov   bonus_timer, 0
+
+rbe_done:
+    pop   ax
+    ret
+RestoreBonusEffect ENDP
 
 
 END main
